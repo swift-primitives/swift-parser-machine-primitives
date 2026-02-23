@@ -85,7 +85,7 @@ extension Parser.Machine.Expression {
     ) -> Parser.Machine.Expression<Input, Failure, T> {
         typealias NodeID = Parser.Machine.Node<Input, Failure>.ID
         let nextFn: @Sendable (Output) -> NodeID = { output in
-            NodeID(__unchecked: (), next(output).node.rawValue)
+            next(output).node
         }
         let captureID = builder.captures.insert(nextFn)
         let node = Parser.Machine.Node<Input, Failure>.flatMap(

@@ -2,16 +2,6 @@
 public import Identity_Primitives
 public import Machine_Primitives
 
-// MARK: - Tagged Convenience Init
-
-extension Tagged where RawValue == Int {
-    /// Package-level convenience initializer for Tagged with Int rawValue.
-    @inlinable
-    package init(_ rawValue: Int) {
-        self.init(__unchecked: (), rawValue)
-    }
-}
-
 extension Parser {
     public enum Machine {}
 }
@@ -79,7 +69,7 @@ extension Parser.Machine {
     ///
     /// Note: Builder does not conform to Sendable. Program construction should
     /// complete on a single task before the resulting Parser is used.
-    public struct Builder<Input: Parser_Primitives.Parser.Input, Failure: Error & Sendable>
+    public struct Builder<Input: Parser_Primitives.Parser.Input, Failure: Error & Sendable>: ~Copyable
     where Input: Sendable {
         @usableFromInline
         var inner: Machine_Primitives.Machine.Builder<Leaf<Input, Failure>, Failure, Mode>

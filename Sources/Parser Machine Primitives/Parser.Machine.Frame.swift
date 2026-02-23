@@ -14,6 +14,6 @@ extension Parser.Machine {
     /// Extension point for Parsing-specific frame cases (memoization).
     public enum Extra<Checkpoint> {
         /// Memoization frame - caches result when node completes
-        case memoization(node: Int, startPosition: Checkpoint)
+        case memoization(node: Ordinal, startPosition: Checkpoint)
     }
 }

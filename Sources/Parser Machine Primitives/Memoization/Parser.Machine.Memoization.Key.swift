@@ -18,10 +18,10 @@ extension Parser.Machine.Memoization {
 
         /// The node index in the program.
         @usableFromInline
-        let node: Int
+        let node: Ordinal
 
         @inlinable
-        init(position: Checkpoint, node: Int) {
+        init(position: Checkpoint, node: Ordinal) {
             self.position = position
             self.node = node
         }

@@ -34,7 +34,7 @@ extension Parser.Machine {
         let root = build(&builder, ref)
 
         // Patch the hole to point to the actual root
-        builder.inner.nodes[holeID.rawValue] = .ref(root.node)
+        builder.inner[holeID] = .ref(root.node)
 
         return Parser(program: builder.build(), root: root.node)
     }

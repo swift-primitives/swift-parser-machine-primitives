@@ -40,21 +40,9 @@ extension Parser.Machine {
         // The 4x multiplier accounts for worst-case frame usage per recursion level:
         // - 1 recursiveExit frame per level
         // - Up to 3 additional frames for combinator chains (sequence, map, oneOf, etc.)
-        let stackCapacity = (program.maxDepth ?? 10000) * 4
-        var frames: Stack<Frame>
-        do {
-            frames = try Stack<Frame>(reservingCapacity: stackCapacity)
-        } catch {
-            fatalError("Failed to allocate frame stack with capacity \(stackCapacity): \(error)")
-        }
-
-        let arenaCapacity = stackCapacity * 2
-        var arena: Value.Arena
-        do {
-            arena = try Value.Arena(capacity: arenaCapacity)
-        } catch {
-            fatalError("Failed to allocate value arena with capacity \(arenaCapacity): \(error)")
-        }
+        let depthEstimate = (program.maxDepth ?? 10000) * 4
+        var frames = Stack<Frame>(reservingCapacity: try! Index<Frame>.Count(depthEstimate))
+        var arena = Value.Arena(capacity: depthEstimate * 2)
 
         var depth = 0
         var pendingHandle: Value.Handle? = nil
@@ -77,7 +65,7 @@ extension Parser.Machine {
                             index: index + 1,
                             savedCheckpoint: savedCheckpoint
                         ))
-                        return .continueWith(Recovery.ID(alternatives[index].rawValue))
+                        return .continueWith(alternatives[index].retag(Recovery.Tag.self))
                     }
 
                 case .many(_, let savedCheckpoint, let resultHandles, let finalize):
@@ -148,7 +136,7 @@ extension Parser.Machine {
                             memoization: &memoization
                         ) {
                         case .continueWith(let recovered):
-                            current = Node.ID(recovered.rawValue)
+                            current = recovered.retag(Node.self)
                         case .handleReady(let recoveredHandle):
                             pendingHandle = recoveredHandle
                         case .propagate:
@@ -158,7 +146,7 @@ extension Parser.Machine {
 
                 case .flatMap(let next):
                     let erasedID = next.next(using: program.captures, value)
-                    current = Node.ID(erasedID.rawValue)
+                    current = erasedID.retag(Node.self)
 
                 case .sequence(.second(let b, let combine)):
                     let firstHandle = arena.allocate(value)
@@ -227,7 +215,7 @@ extension Parser.Machine {
                         memoization: &memoization
                     ) {
                     case .continueWith(let recovered):
-                        current = Node.ID(recovered.rawValue)
+                        current = recovered.retag(Node.self)
                         continue
                     case .handleReady(let handle):
                         pendingHandle = handle
@@ -258,7 +246,7 @@ extension Parser.Machine {
                         memoization: &memoization
                     ) {
                     case .continueWith(let recovered):
-                        current = Node.ID(recovered.rawValue)
+                        current = recovered.retag(Node.self)
                     case .handleReady(let handle):
                         pendingHandle = handle
                     case .propagate:
@@ -327,7 +315,7 @@ extension Parser.Machine {
                         memoization: &memoization
                     ) {
                     case .continueWith(let recovered):
-                        current = Node.ID(recovered.rawValue)
+                        current = recovered.retag(Node.self)
                     case .handleReady(let handle):
                         pendingHandle = handle
                     case .propagate:

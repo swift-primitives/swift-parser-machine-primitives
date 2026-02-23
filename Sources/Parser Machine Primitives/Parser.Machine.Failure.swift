@@ -14,7 +14,7 @@ extension Parser.Machine.Failure {
         enum Tag {}
 
         @usableFromInline
-        typealias ID = Tagged<Tag, Int>
+        typealias ID = Tagged<Tag, Ordinal>
 
         case continueWith(ID)
         case handleReady(Parser.Machine.Value.Handle)
