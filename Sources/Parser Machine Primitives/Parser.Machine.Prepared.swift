@@ -39,7 +39,7 @@ extension Parser.Machine {
     /// It contains no mutable state and is safe for concurrent use.
     public struct Prepared<P: Parser_Primitives.Parser.`Protocol`>
     where P.Input: Parser_Primitives.Parser.Input & Sendable,
-          P.Output: Sendable,
+          P.ParseOutput: Sendable,
           P.Failure: Sendable
     {
         @usableFromInline
@@ -81,12 +81,12 @@ extension Parser.Machine {
 
 extension Parser.Machine.Prepared: Parser_Primitives.Parser.`Protocol` {
     public typealias Input = P.Input
-    public typealias Output = P.Output
+    public typealias ParseOutput = P.ParseOutput
     public typealias Failure = P.Failure
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
-        try Parser.Machine.run(program: program, root: root, input: &input, as: Output.self)
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+        try Parser.Machine.run(program: program, root: root, input: &input, as: ParseOutput.self)
     }
 }
 

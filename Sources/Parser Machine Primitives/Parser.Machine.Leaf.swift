@@ -11,7 +11,7 @@ extension Parser.Machine {
     ) -> Expression<Input, Failure, Output>
     where P: Parser_Primitives.Parser.`Protocol` & Sendable,
           P.Input == Input,
-          P.Output == Output,
+          P.ParseOutput == Output,
           P.Failure == Failure,
           Input: Parser_Primitives.Parser.Input & Sendable,
           Output: Sendable,
@@ -33,7 +33,7 @@ extension Parser.Machine {
     ) -> Expression<Input, Failure, Output>
     where P: Parser_Primitives.Parser.`Protocol` & Sendable,
           P.Input == Input,
-          P.Output == Output,
+          P.ParseOutput == Output,
           Input: Parser_Primitives.Parser.Input & Sendable,
           Output: Sendable,
           Failure: Error & Sendable
