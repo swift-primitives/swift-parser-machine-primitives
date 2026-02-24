@@ -116,6 +116,49 @@ let package = Package(
                 "Parser Machine Parse Primitives",
             ]
         ),
+
+        // MARK: - Tests
+
+        .testTarget(
+            name: "Parser Machine Core Primitives Tests",
+            dependencies: [
+                "Parser Machine Core Primitives",
+            ]
+        ),
+
+        .testTarget(
+            name: "Parser Machine Memoization Primitives Tests",
+            dependencies: [
+                "Parser Machine Memoization Primitives",
+                .product(name: "Identity Primitives Test Support", package: "swift-identity-primitives"),
+            ]
+        ),
+
+        .testTarget(
+            name: "Parser Machine Compile Primitives Tests",
+            dependencies: [
+                "Parser Machine Compile Primitives",
+                "Parser Machine Combinator Primitives",
+                .product(name: "Parser Primitives Test Support", package: "swift-parser-primitives"),
+            ]
+        ),
+
+        .testTarget(
+            name: "Parser Machine Combinator Primitives Tests",
+            dependencies: [
+                "Parser Machine Combinator Primitives",
+                .product(name: "Parser Primitives Test Support", package: "swift-parser-primitives"),
+            ]
+        ),
+
+        .testTarget(
+            name: "Parser Machine Parse Primitives Tests",
+            dependencies: [
+                "Parser Machine Parse Primitives",
+                "Parser Machine Combinator Primitives",
+                .product(name: "Parser Primitives Test Support", package: "swift-parser-primitives"),
+            ]
+        ),
     ],
     swiftLanguageModes: [.v6]
 )
@@ -124,14 +167,15 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
     let ecosystem: [SwiftSetting] = [
         .strictMemorySafety(),
         .enableUpcomingFeature("ExistentialAny"),
-        .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("MemberImportVisibility"),
         .enableExperimentalFeature("Lifetimes"),
         .enableExperimentalFeature("SuppressedAssociatedTypes"),
         .enableExperimentalFeature("SuppressedAssociatedTypesWithDefaults"),
     ]
 
-    let package: [SwiftSetting] = []
+    let sources: [SwiftSetting] = target.type == .test ? [] : [
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("MemberImportVisibility"),
+    ]
 
-    target.swiftSettings = (target.swiftSettings ?? []) + ecosystem + package
+    target.swiftSettings = (target.swiftSettings ?? []) + ecosystem + sources
 }
