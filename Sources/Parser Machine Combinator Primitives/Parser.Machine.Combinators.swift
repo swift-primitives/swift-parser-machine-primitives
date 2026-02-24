@@ -10,7 +10,7 @@ extension Parser.Machine {
         _ value: Output,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
-    where Input: Parser_Primitives.Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable & ~Copyable,
           Output: Sendable,
           Failure: Error & Sendable
     {
@@ -57,7 +57,7 @@ extension Parser.Machine {
         _ transform: @Sendable @escaping (Output) throws(Failure) -> NewOutput,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, NewOutput>
-    where Input: Parser_Primitives.Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable & ~Copyable,
           Failure: Error & Sendable
     {
         let captureID = builder.captures.insert(transform)
@@ -102,7 +102,7 @@ extension Parser.Machine {
         combine: @Sendable @escaping (A, B) -> C,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, C>
-    where Input: Parser_Primitives.Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable & ~Copyable,
           Failure: Error & Sendable
     {
         let captureID = builder.captures.insert(combine)
@@ -124,7 +124,7 @@ extension Parser.Machine {
         _ alternatives: [Expression<Input, Failure, Output>],
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
-    where Input: Parser_Primitives.Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable & ~Copyable,
           Failure: Error & Sendable
     {
         let nodeIDs = alternatives.map { $0.node }
@@ -142,7 +142,7 @@ extension Parser.Machine {
         _ expr: Expression<Input, Failure, T>,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, [T]>
-    where Input: Parser_Primitives.Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable & ~Copyable,
           Failure: Error & Sendable
     {
         let node = Node<Input, Failure>.many(
@@ -162,7 +162,7 @@ extension Parser.Machine {
         _ expr: Expression<Input, Failure, T>,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, T?>
-    where Input: Parser_Primitives.Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable & ~Copyable,
           Failure: Error & Sendable
     {
         let wrapSome: @Sendable (T) -> T? = { Swift.Optional.some($0) }

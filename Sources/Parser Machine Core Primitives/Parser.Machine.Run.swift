@@ -11,7 +11,7 @@ extension Parser.Machine {
         input: inout Input,
         as outputType: Output.Type
     ) throws(Failure) -> Output
-    where Input: Parser_Primitives.Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable & ~Copyable,
           Failure: Error & Sendable
     {
         typealias Value = Parser_Primitives.Parser.Machine.Value

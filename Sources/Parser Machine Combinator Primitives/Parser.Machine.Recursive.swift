@@ -19,7 +19,7 @@ extension Parser.Machine {
         maxDepth: Int? = nil,
         _ build: (inout Builder<Input, Failure>, Reference<Input, Failure, Output>) -> Expression<Input, Failure, Output>
     ) -> Parser<Input, Output, Failure>
-    where Input: Parser_Primitives.Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable & ~Copyable,
           Output: Sendable,
           Failure: Error & Sendable
     {
@@ -42,7 +42,7 @@ extension Parser.Machine {
     public static func build<Input, Output, Failure>(
         _ build: (inout Builder<Input, Failure>) -> Expression<Input, Failure, Output>
     ) -> Parser<Input, Output, Failure>
-    where Input: Parser_Primitives.Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable & ~Copyable,
           Output: Sendable,
           Failure: Error & Sendable
     {

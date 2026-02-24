@@ -13,7 +13,7 @@ extension Parser.Machine {
           P.Input == Input,
           P.ParseOutput == Output,
           P.Failure == Failure,
-          Input: Parser_Primitives.Parser.Input & Sendable,
+          Input: Parser_Primitives.Parser.Input & Sendable & ~Copyable,
           Output: Sendable,
           Failure: Error & Sendable
     {
@@ -34,7 +34,7 @@ extension Parser.Machine {
     where P: Parser_Primitives.Parser.`Protocol` & Sendable,
           P.Input == Input,
           P.ParseOutput == Output,
-          Input: Parser_Primitives.Parser.Input & Sendable,
+          Input: Parser_Primitives.Parser.Input & Sendable & ~Copyable,
           Output: Sendable,
           Failure: Error & Sendable
     {

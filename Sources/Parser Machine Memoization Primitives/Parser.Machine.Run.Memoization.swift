@@ -23,7 +23,7 @@ extension Parser.Machine {
         memoization: inout Memoization.Table<Input.Checkpoint>,
         as outputType: Output.Type
     ) throws(Failure) -> Output
-    where Input: Parser_Primitives.Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable & ~Copyable,
           Input.Checkpoint: Hashable,
           Failure: Error & Sendable
     {
