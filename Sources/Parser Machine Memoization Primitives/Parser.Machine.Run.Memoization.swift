@@ -16,8 +16,7 @@ extension Parser.Machine {
     ///
     /// Caches parse results at each (position, node) pair,
     /// enabling linear-time parsing and incremental re-parsing.
-    @usableFromInline
-    static func run<Input, Output, Failure>(
+    package static func run<Input, Output, Failure>(
         program: Program<Input, Failure>,
         root: Node<Input, Failure>.ID,
         input: inout Input,

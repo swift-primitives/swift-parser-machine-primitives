@@ -27,7 +27,6 @@ extension Parser.Machine.Parser.Parse where Input.Checkpoint: Hashable {
     /// // Re-parse (reuses cached results)
     /// let tree2 = try ctx(&input2)
     /// ```
-    @inlinable
     public var incremental: Incremental {
         Incremental(parser: parser)
     }
@@ -39,16 +38,13 @@ extension Parser.Machine.Parser.Parse {
     /// Maintains a memoization table that caches parse results,
     /// enabling efficient re-parsing after edits.
     public struct Incremental where Input.Checkpoint: Hashable {
-        @usableFromInline
-        let parser: Parser.Machine.Parser<Input, Output, Failure>
+        package let parser: Parser.Machine.Parser<Input, Output, Failure>
 
-        @usableFromInline
-        var memoization: Parser.Machine.Memoization.Table<Input.Checkpoint>
+        package var memoization: Parser.Machine.Memoization.Table<Input.Checkpoint>
 
         /// Creates an incremental parsing context.
         ///
         /// - Parameter parser: The parser to use for parsing.
-        @inlinable
         public init(parser: Parser.Machine.Parser<Input, Output, Failure>) {
             self.parser = parser
             self.memoization = .init()
@@ -59,7 +55,6 @@ extension Parser.Machine.Parser.Parse {
         /// - Parameters:
         ///   - parser: The parser to use for parsing.
         ///   - capacity: Expected number of memoization entries.
-        @inlinable
         public init(parser: Parser.Machine.Parser<Input, Output, Failure>, capacity: Int) {
             self.parser = parser
             self.memoization = .init(capacity: capacity)
@@ -78,7 +73,6 @@ extension Parser.Machine.Parser.Parse.Incremental {
     /// - Parameter input: The input to parse.
     /// - Returns: The parsed output.
     /// - Throws: The failure error if parsing fails.
-    @inlinable
     public mutating func callAsFunction(_ input: inout Input) throws(Failure) -> Output {
         try Parser.Machine.run(
             program: parser.program,
@@ -99,7 +93,6 @@ extension Parser.Machine.Parser.Parse.Incremental where Input.Checkpoint: Compar
     /// stale cache entries are not reused.
     ///
     /// - Parameter edit: The edit descriptor.
-    @inlinable
     public mutating func invalidate(_ edit: Parser.Machine.Memoization.Edit<Input.Checkpoint>) {
         memoization.invalidate(edit)
     }
@@ -109,7 +102,6 @@ extension Parser.Machine.Parser.Parse.Incremental where Input.Checkpoint: Compar
     /// Use this simpler form when you don't have precise edit information.
     ///
     /// - Parameter position: Invalidate entries at or after this position.
-    @inlinable
     public mutating func invalidate(from position: Input.Checkpoint) {
         memoization.invalidate(from: position)
     }
@@ -119,19 +111,16 @@ extension Parser.Machine.Parser.Parse.Incremental where Input.Checkpoint: Compar
 
 extension Parser.Machine.Parser.Parse.Incremental {
     /// The number of cached entries.
-    @inlinable
     public var count: Int {
         memoization.count
     }
 
     /// Whether the memoization table is empty.
-    @inlinable
     public var isEmpty: Bool {
         memoization.isEmpty
     }
 
     /// Clears all cached entries.
-    @inlinable
     public mutating func clear() {
         memoization.clear()
     }

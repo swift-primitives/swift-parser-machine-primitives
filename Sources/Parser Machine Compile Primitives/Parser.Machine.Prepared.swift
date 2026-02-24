@@ -67,7 +67,6 @@ extension Parser.Machine {
         /// - Parameters:
         ///   - source: The parser to compile.
         ///   - witness: The compilation witness.
-        @inlinable
         public init(source: P, witness: Compile.Witness<P>) {
             var builder = Builder<P.Input, P.Failure>()
             let expression = witness.compile(source, into: &builder)
@@ -84,7 +83,6 @@ extension Parser.Machine.Prepared: Parser_Primitives.Parser.`Protocol` {
     public typealias ParseOutput = P.ParseOutput
     public typealias Failure = P.Failure
 
-    @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         try Parser.Machine.run(program: program, root: root, input: &input, as: ParseOutput.self)
     }

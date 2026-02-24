@@ -13,10 +13,10 @@ extension Parser.Machine {
     public struct Leaf<Input: Parser_Primitives.Parser.Input, Failure: Error & Sendable>: @unchecked Sendable
     where Input: Sendable {
         @usableFromInline
-        let run: @Sendable (inout Input) throws(Failure) -> Value
+        package let run: @Sendable (inout Input) throws(Failure) -> Value
 
         @usableFromInline
-        init(_ run: @Sendable @escaping (inout Input) throws(Failure) -> Value) {
+        package init(_ run: @Sendable @escaping (inout Input) throws(Failure) -> Value) {
             self.run = run
         }
     }

@@ -3,18 +3,14 @@ public import Identity_Primitives
 public import Machine_Primitives
 
 extension Parser.Machine {
-    @usableFromInline
-    enum Failure {}
+    package enum Failure {}
 }
 
 extension Parser.Machine.Failure {
-    @usableFromInline
-    enum Recovery {
-        @usableFromInline
-        enum Tag {}
+    package enum Recovery {
+        package enum Tag {}
 
-        @usableFromInline
-        typealias ID = Tagged<Tag, Ordinal>
+        package typealias ID = Tagged<Tag, Ordinal>
 
         case continueWith(ID)
         case handleReady(Parser.Machine.Value.Handle)

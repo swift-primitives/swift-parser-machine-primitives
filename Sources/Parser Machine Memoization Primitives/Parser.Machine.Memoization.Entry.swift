@@ -10,8 +10,7 @@ extension Parser.Machine.Memoization {
     ///
     /// For packrat parsing, both successes and failures are cached.
     /// Caching failures is essential for linear-time guarantees.
-    @usableFromInline
-    enum Entry<Checkpoint: Sendable> {
+    package enum Entry<Checkpoint: Sendable> {
         /// Successful parse with output and end position.
         case success(output: Parser.Machine.Value, end: Checkpoint)
 
@@ -23,16 +22,14 @@ extension Parser.Machine.Memoization {
 // MARK: - Predicates
 
 extension Parser.Machine.Memoization.Entry {
-    @inlinable
-    var isSuccess: Bool {
+    package var isSuccess: Bool {
         switch self {
         case .success: return true
         case .failure: return false
         }
     }
 
-    @inlinable
-    var isFailure: Bool {
+    package var isFailure: Bool {
         switch self {
         case .success: return false
         case .failure: return true

@@ -15,7 +15,6 @@ extension Parser.Machine {
     ///     ...
     /// }
     /// ```
-    @inlinable
     public static func recursive<Input, Output, Failure>(
         maxDepth: Int? = nil,
         _ build: (inout Builder<Input, Failure>, Reference<Input, Failure, Output>) -> Expression<Input, Failure, Output>
@@ -40,7 +39,6 @@ extension Parser.Machine {
     }
 
     /// Creates a non-recursive parser from a builder closure.
-    @inlinable
     public static func build<Input, Output, Failure>(
         _ build: (inout Builder<Input, Failure>) -> Expression<Input, Failure, Output>
     ) -> Parser<Input, Output, Failure>

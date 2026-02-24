@@ -6,7 +6,6 @@ public import Identity_Primitives
 
 extension Parser.Machine {
     /// Creates a pure expression that always succeeds with the given value.
-    @inlinable
     public static func pure<Input, Output, Failure>(
         _ value: Output,
         in builder: inout Builder<Input, Failure>
@@ -25,7 +24,6 @@ extension Parser.Machine {
 
 extension Parser.Machine.Expression {
     /// Transforms the output of this expression.
-    @inlinable
     public func map<T: Sendable>(
         _ transform: @Sendable @escaping (Output) -> T,
         in builder: inout Parser.Machine.Builder<Input, Failure>
@@ -44,7 +42,6 @@ extension Parser.Machine.Expression {
 
 extension Parser.Machine.Expression {
     /// Transforms the output of this expression with a throwing function.
-    @inlinable
     public func tryMap<T: Sendable>(
         _ transform: @Sendable @escaping (Output) throws(Failure) -> T,
         in builder: inout Parser.Machine.Builder<Input, Failure>
@@ -55,7 +52,6 @@ extension Parser.Machine.Expression {
 
 extension Parser.Machine {
     /// Creates an expression that transforms its child's output with a throwing function.
-    @inlinable
     public static func tryMap<Input, Output, Failure, NewOutput: Sendable>(
         _ expr: Expression<Input, Failure, Output>,
         _ transform: @Sendable @escaping (Output) throws(Failure) -> NewOutput,
@@ -78,7 +74,6 @@ extension Parser.Machine {
 
 extension Parser.Machine.Expression {
     /// Chains this expression with another that depends on its output.
-    @inlinable
     public func flatMap<T>(
         _ next: @Sendable @escaping (Output) -> Parser.Machine.Expression<Input, Failure, T>,
         in builder: inout Parser.Machine.Builder<Input, Failure>
@@ -101,7 +96,6 @@ extension Parser.Machine.Expression {
 
 extension Parser.Machine {
     /// Sequences two expressions and combines their outputs.
-    @inlinable
     public static func sequence<Input, Failure, A, B, C: Sendable>(
         _ a: Expression<Input, Failure, A>,
         _ b: Expression<Input, Failure, B>,
@@ -126,7 +120,6 @@ extension Parser.Machine {
 
 extension Parser.Machine {
     /// Creates an expression that tries alternatives in order until one succeeds.
-    @inlinable
     public static func oneOf<Input, Failure, Output>(
         _ alternatives: [Expression<Input, Failure, Output>],
         in builder: inout Builder<Input, Failure>
@@ -145,7 +138,6 @@ extension Parser.Machine {
 
 extension Parser.Machine {
     /// Creates an expression that parses zero or more occurrences.
-    @inlinable
     public static func many<Input, Failure, T: Sendable>(
         _ expr: Expression<Input, Failure, T>,
         in builder: inout Builder<Input, Failure>
@@ -166,7 +158,6 @@ extension Parser.Machine {
 
 extension Parser.Machine {
     /// Creates an expression that optionally parses its child.
-    @inlinable
     public static func optional<Input, Failure, T: Sendable>(
         _ expr: Expression<Input, Failure, T>,
         in builder: inout Builder<Input, Failure>
@@ -190,7 +181,6 @@ extension Parser.Machine {
 
 extension Parser.Machine.Reference {
     /// Creates an expression from this reference, for use in recursive definitions.
-    @inlinable
     public func expression(
         in builder: inout Parser.Machine.Builder<Input, Failure>
     ) -> Parser.Machine.Expression<Input, Failure, Output> {

@@ -27,17 +27,14 @@ extension Parser.Machine.Parser {
     /// let tree2 = try ctx(&input2)
     /// ```
     public struct Parse {
-        @usableFromInline
-        let parser: Parser.Machine.Parser<Input, Output, Failure>
+        package let parser: Parser.Machine.Parser<Input, Output, Failure>
 
-        @usableFromInline
-        init(parser: Parser.Machine.Parser<Input, Output, Failure>) {
+        package init(parser: Parser.Machine.Parser<Input, Output, Failure>) {
             self.parser = parser
         }
     }
 
     /// Returns the parse accessor for execution variants.
-    @inlinable
     public var parse: Parse {
         Parse(parser: self)
     }
@@ -53,7 +50,6 @@ extension Parser.Machine.Parser.Parse {
     /// - Parameter input: The input to parse.
     /// - Returns: The parsed output.
     /// - Throws: The failure error if parsing fails.
-    @inlinable
     public func callAsFunction(_ input: inout Input) throws(Failure) -> Output {
         try Parser.Machine.run(program: parser.program, root: parser.root, input: &input, as: Output.self)
     }

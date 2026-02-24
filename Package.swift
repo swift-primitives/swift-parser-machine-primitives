@@ -16,27 +16,104 @@ let package = Package(
             name: "Parser Machine Primitives",
             targets: ["Parser Machine Primitives"]
         ),
+        .library(
+            name: "Parser Machine Core Primitives",
+            targets: ["Parser Machine Core Primitives"]
+        ),
+        .library(
+            name: "Parser Machine Memoization Primitives",
+            targets: ["Parser Machine Memoization Primitives"]
+        ),
+        .library(
+            name: "Parser Machine Compile Primitives",
+            targets: ["Parser Machine Compile Primitives"]
+        ),
+        .library(
+            name: "Parser Machine Combinator Primitives",
+            targets: ["Parser Machine Combinator Primitives"]
+        ),
+        .library(
+            name: "Parser Machine Parse Primitives",
+            targets: ["Parser Machine Parse Primitives"]
+        ),
     ],
     dependencies: [
         .package(path: "../swift-parser-primitives"),
-        .package(path: "../swift-input-primitives"),
         .package(path: "../swift-stack-primitives"),
         .package(path: "../swift-slab-primitives"),
         .package(path: "../swift-identity-primitives"),
-        .package(path: "../swift-ownership-primitives"),
         .package(path: "../swift-machine-primitives"),
     ],
     targets: [
+        // MARK: - Core
+
+        .target(
+            name: "Parser Machine Core Primitives",
+            dependencies: [
+                .product(name: "Parser Primitives", package: "swift-parser-primitives"),
+                .product(name: "Identity Primitives", package: "swift-identity-primitives"),
+                .product(name: "Machine Primitives", package: "swift-machine-primitives"),
+                .product(name: "Stack Primitives", package: "swift-stack-primitives"),
+                .product(name: "Slab Primitives", package: "swift-slab-primitives"),
+            ]
+        ),
+
+        // MARK: - Memoization
+
+        .target(
+            name: "Parser Machine Memoization Primitives",
+            dependencies: [
+                "Parser Machine Core Primitives",
+                .product(name: "Identity Primitives", package: "swift-identity-primitives"),
+                .product(name: "Machine Primitives", package: "swift-machine-primitives"),
+                .product(name: "Stack Primitives", package: "swift-stack-primitives"),
+                .product(name: "Slab Primitives", package: "swift-slab-primitives"),
+            ]
+        ),
+
+        // MARK: - Compile
+
+        .target(
+            name: "Parser Machine Compile Primitives",
+            dependencies: [
+                "Parser Machine Core Primitives",
+                .product(name: "Machine Primitives", package: "swift-machine-primitives"),
+            ]
+        ),
+
+        // MARK: - Combinator
+
+        .target(
+            name: "Parser Machine Combinator Primitives",
+            dependencies: [
+                "Parser Machine Core Primitives",
+                .product(name: "Identity Primitives", package: "swift-identity-primitives"),
+                .product(name: "Machine Primitives", package: "swift-machine-primitives"),
+            ]
+        ),
+
+        // MARK: - Parse
+
+        .target(
+            name: "Parser Machine Parse Primitives",
+            dependencies: [
+                "Parser Machine Core Primitives",
+                "Parser Machine Memoization Primitives",
+                "Parser Machine Compile Primitives",
+                .product(name: "Machine Primitives", package: "swift-machine-primitives"),
+            ]
+        ),
+
+        // MARK: - Umbrella
+
         .target(
             name: "Parser Machine Primitives",
             dependencies: [
-                .product(name: "Parser Primitives", package: "swift-parser-primitives"),
-                .product(name: "Input Primitives", package: "swift-input-primitives"),
-                .product(name: "Stack Primitives", package: "swift-stack-primitives"),
-                .product(name: "Slab Primitives", package: "swift-slab-primitives"),
-                .product(name: "Identity Primitives", package: "swift-identity-primitives"),
-                .product(name: "Ownership Primitives", package: "swift-ownership-primitives"),
-                .product(name: "Machine Primitives", package: "swift-machine-primitives")
+                "Parser Machine Core Primitives",
+                "Parser Machine Memoization Primitives",
+                "Parser Machine Compile Primitives",
+                "Parser Machine Combinator Primitives",
+                "Parser Machine Parse Primitives",
             ]
         ),
     ],

@@ -32,19 +32,15 @@ extension Parser.Machine {
     /// closures. For cross-task sharing, use explicit Sendable wrappers with documented invariants.
     public struct Parser<Input: Parser_Primitives.Parser.Input, Output, Failure: Error & Sendable>: Parser_Primitives.Parser.`Protocol`
     where Input: Sendable, Output: Sendable {
-        @usableFromInline
-        let program: Program<Input, Failure>
+        package let program: Program<Input, Failure>
 
-        @usableFromInline
-        let root: Node<Input, Failure>.ID
+        package let root: Node<Input, Failure>.ID
 
-        @usableFromInline
-        init(program: Program<Input, Failure>, root: Node<Input, Failure>.ID) {
+        package init(program: Program<Input, Failure>, root: Node<Input, Failure>.ID) {
             self.program = program
             self.root = root
         }
 
-        @inlinable
         public func parse(_ input: inout Input) throws(Failure) -> Output {
             try Parser_Primitives.Parser.Machine.run(program: program, root: root, input: &input, as: Output.self)
         }
@@ -53,11 +49,9 @@ extension Parser.Machine {
     /// A reference to a node in the program, used for recursive grammar definitions.
     public struct Reference<Input: Parser_Primitives.Parser.Input, Failure: Error & Sendable, Output>: Sendable
     where Input: Sendable {
-        @usableFromInline
-        let node: Node<Input, Failure>.ID
+        package let node: Node<Input, Failure>.ID
 
-        @usableFromInline
-        init(node: Node<Input, Failure>.ID) {
+        package init(node: Node<Input, Failure>.ID) {
             self.node = node
         }
     }
@@ -71,29 +65,25 @@ extension Parser.Machine {
     /// complete on a single task before the resulting Parser is used.
     public struct Builder<Input: Parser_Primitives.Parser.Input, Failure: Error & Sendable>: ~Copyable
     where Input: Sendable {
-        @usableFromInline
-        var inner: Machine_Primitives.Machine.Builder<Leaf<Input, Failure>, Failure, Mode>
+        package var inner: Machine_Primitives.Machine.Builder<Leaf<Input, Failure>, Failure, Mode>
 
-        @usableFromInline
-        init(maxDepth: Int? = nil) {
+        package init(maxDepth: Int? = nil) {
             self.inner = Machine_Primitives.Machine.Builder(maxDepth: maxDepth)
         }
 
         @usableFromInline
-        mutating func allocate(_ node: Node<Input, Failure>) -> Node<Input, Failure>.ID {
+        package mutating func allocate(_ node: Node<Input, Failure>) -> Node<Input, Failure>.ID {
             inner.allocate(node)
         }
 
         /// Access to the capture store for registering closures.
-        @usableFromInline
-        var captures: Machine_Primitives.Machine.Capture.Store<Mode> {
+        package var captures: Machine_Primitives.Machine.Capture.Store<Mode> {
             get { inner.captures }
             _modify { yield &inner.captures }
         }
 
         /// Builds the final immutable program.
-        @usableFromInline
-        consuming func build() -> Program<Input, Failure> {
+        package consuming func build() -> Program<Input, Failure> {
             inner.build()
         }
     }
@@ -101,11 +91,10 @@ extension Parser.Machine {
     /// An expression in the machine program, representing a parser that produces Output.
     public struct Expression<Input: Parser_Primitives.Parser.Input, Failure: Error & Sendable, Output>: Sendable
     where Input: Sendable {
-        @usableFromInline
-        let node: Node<Input, Failure>.ID
+        package let node: Node<Input, Failure>.ID
 
         @usableFromInline
-        init(node: Node<Input, Failure>.ID) {
+        package init(node: Node<Input, Failure>.ID) {
             self.node = node
         }
     }

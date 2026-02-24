@@ -141,7 +141,6 @@ extension Parser.Machine.Compiled: Parser_Primitives.Parser.`Protocol` {
     public typealias ParseOutput = P.ParseOutput
     public typealias Failure = P.Failure
 
-    @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         let result = cache.getOrCompile(source: source, witness: witness)
         return try Parser.Machine.run(program: result.program, root: result.root, input: &input, as: ParseOutput.self)

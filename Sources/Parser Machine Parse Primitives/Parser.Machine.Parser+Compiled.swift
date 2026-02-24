@@ -21,7 +21,6 @@ where P.Input: Parser_Primitives.Parser.Input & Sendable,
     ///
     /// - Parameter witness: The compilation witness.
     /// - Returns: A lazy-compiling parser wrapper.
-    @inlinable
     public func compiled(
         using witness: Parser.Machine.Compile.Witness<P>
     ) -> Parser.Machine.Compiled<P> {
@@ -35,7 +34,6 @@ where P.Input: Parser_Primitives.Parser.Input & Sendable,
     ///
     /// - Parameter witness: The compilation witness.
     /// - Returns: An immutable prepared parser.
-    @inlinable
     public func prepared(
         using witness: Parser.Machine.Compile.Witness<P>
     ) -> Parser.Machine.Prepared<P> {
@@ -57,7 +55,6 @@ where P: Sendable,
     /// is NOT `Sendable`. For cross-task sharing, use `prepared()`.
     ///
     /// - Returns: A lazy-compiling parser wrapper.
-    @inlinable
     public func compiled() -> Parser.Machine.Compiled<P> {
         compiled(using: .leaf)
     }
@@ -68,7 +65,6 @@ where P: Sendable,
     /// is `Sendable` and safe for cross-task sharing.
     ///
     /// - Returns: An immutable prepared parser.
-    @inlinable
     public func prepared() -> Parser.Machine.Prepared<P> {
         prepared(using: .leaf)
     }

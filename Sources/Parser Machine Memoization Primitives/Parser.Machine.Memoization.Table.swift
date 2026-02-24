@@ -9,18 +9,15 @@ extension Parser.Machine.Memoization {
     /// Memoization table for caching parse results.
     ///
     /// Maps (position, node) keys to cached results.
-    @usableFromInline
-    struct Table<Checkpoint: Hashable & Sendable> {
+    package struct Table<Checkpoint: Hashable & Sendable> {
         @usableFromInline
         var storage: [Key<Checkpoint>: Entry<Checkpoint>]
 
-        @inlinable
-        init() {
+        package init() {
             self.storage = [:]
         }
 
-        @inlinable
-        init(capacity: Int) {
+        package init(capacity: Int) {
             self.storage = Dictionary(minimumCapacity: capacity)
         }
     }
@@ -29,13 +26,11 @@ extension Parser.Machine.Memoization {
 // MARK: - Lookup
 
 extension Parser.Machine.Memoization.Table {
-    @inlinable
-    func lookup(_ key: Parser.Machine.Memoization.Key<Checkpoint>) -> Parser.Machine.Memoization.Entry<Checkpoint>? {
+    package func lookup(_ key: Parser.Machine.Memoization.Key<Checkpoint>) -> Parser.Machine.Memoization.Entry<Checkpoint>? {
         storage[key]
     }
 
-    @inlinable
-    mutating func store(_ entry: Parser.Machine.Memoization.Entry<Checkpoint>, for key: Parser.Machine.Memoization.Key<Checkpoint>) {
+    package mutating func store(_ entry: Parser.Machine.Memoization.Entry<Checkpoint>, for key: Parser.Machine.Memoization.Key<Checkpoint>) {
         storage[key] = entry
     }
 }
@@ -43,18 +38,15 @@ extension Parser.Machine.Memoization.Table {
 // MARK: - Metrics
 
 extension Parser.Machine.Memoization.Table {
-    @inlinable
-    var count: Int {
+    package var count: Int {
         storage.count
     }
 
-    @inlinable
-    var isEmpty: Bool {
+    package var isEmpty: Bool {
         storage.isEmpty
     }
 
-    @inlinable
-    mutating func clear() {
+    package mutating func clear() {
         storage.removeAll(keepingCapacity: true)
     }
 }
@@ -62,8 +54,7 @@ extension Parser.Machine.Memoization.Table {
 // MARK: - Invalidation
 
 extension Parser.Machine.Memoization.Table where Checkpoint: Comparable {
-    @inlinable
-    mutating func invalidate(_ edit: Parser.Machine.Memoization.Edit<Checkpoint>) {
+    package mutating func invalidate(_ edit: Parser.Machine.Memoization.Edit<Checkpoint>) {
         storage = storage.filter { key, entry in
             switch entry {
             case .success(_, let endPosition):
@@ -74,8 +65,7 @@ extension Parser.Machine.Memoization.Table where Checkpoint: Comparable {
         }
     }
 
-    @inlinable
-    mutating func invalidate(from position: Checkpoint) {
+    package mutating func invalidate(from position: Checkpoint) {
         storage = storage.filter { key, _ in
             key.position < position
         }
