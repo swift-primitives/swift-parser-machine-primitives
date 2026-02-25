@@ -159,6 +159,15 @@ let package = Package(
                 .product(name: "Parser Primitives Test Support", package: "swift-parser-primitives"),
             ]
         ),
+
+        .testTarget(
+            name: "Parser Machine Equivalence Tests",
+            dependencies: [
+                "Parser Machine Compile Primitives",
+                "Parser Machine Combinator Primitives",
+                .product(name: "Parser Primitives Test Support", package: "swift-parser-primitives"),
+            ]
+        ),
     ],
     swiftLanguageModes: [.v6]
 )
@@ -167,15 +176,15 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
     let ecosystem: [SwiftSetting] = [
         .strictMemorySafety(),
         .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
         .enableExperimentalFeature("Lifetimes"),
         .enableExperimentalFeature("SuppressedAssociatedTypes"),
         .enableExperimentalFeature("SuppressedAssociatedTypesWithDefaults"),
     ]
 
-    let sources: [SwiftSetting] = target.type == .test ? [] : [
-        .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("MemberImportVisibility"),
-    ]
+    let package: [SwiftSetting] = []
 
-    target.swiftSettings = (target.swiftSettings ?? []) + ecosystem + sources
+    target.swiftSettings = (target.swiftSettings ?? []) + ecosystem + package
 }
