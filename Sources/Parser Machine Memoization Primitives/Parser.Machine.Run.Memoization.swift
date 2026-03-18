@@ -106,10 +106,7 @@ extension Parser.Machine {
                 let value = arena.release(handle)
 
                 if frames.isEmpty {
-                    guard let result = value.take(Output.self) else {
-                        fatalError("Type mismatch in Machine output")
-                    }
-                    return result
+                    return value[as: Output.self]
                 }
 
                 guard let frame = frames.pop() else {

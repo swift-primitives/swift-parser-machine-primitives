@@ -1,6 +1,7 @@
 import Testing
 import Parser_Machine_Memoization_Primitives
 import Identity_Primitives_Test_Support
+import Machine_Value_Primitives
 
 @Suite("Parser.Machine.Memoization.Table")
 struct ParserMachineMemoizationTableTests {

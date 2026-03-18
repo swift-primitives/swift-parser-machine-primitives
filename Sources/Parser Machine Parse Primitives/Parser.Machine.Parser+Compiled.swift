@@ -9,7 +9,7 @@
 
 extension Parser.Parse
 where P.Input: Parser_Primitives.Parser.Input & Sendable,
-      P.ParseOutput: Sendable,
+      P.Output: Sendable,
       P.Failure: Sendable
 {
     /// Creates a lazily-compiled version of this parser.
@@ -46,7 +46,7 @@ where P.Input: Parser_Primitives.Parser.Input & Sendable,
 extension Parser.Parse
 where P: Sendable,
       P.Input: Parser_Primitives.Parser.Input & Sendable,
-      P.ParseOutput: Sendable,
+      P.Output: Sendable,
       P.Failure: Sendable
 {
     /// Creates a lazily-compiled version using leaf compilation.

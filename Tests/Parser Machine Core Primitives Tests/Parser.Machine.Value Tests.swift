@@ -1,5 +1,6 @@
 import Testing
 import Parser_Machine_Core_Primitives
+import Machine_Value_Primitives
 
 // MARK: - Value
 
@@ -13,22 +14,22 @@ struct ParserMachineValueTests {
 
 extension ParserMachineValueTests.Unit {
     @Test
-    func `make and take preserves integer value`() {
+    func `make and subscript preserves integer value`() {
         let value = Parser.Machine.Value.make(42)
-        #expect(value.take(Int.self) == 42)
+        #expect(value[as: Int.self] == 42)
     }
 
     @Test
-    func `make and take preserves string value`() {
+    func `make and subscript preserves string value`() {
         let value = Parser.Machine.Value.make("hello")
-        #expect(value.take(String.self) == "hello")
+        #expect(value[as: String.self] == "hello")
     }
 }
 
 extension ParserMachineValueTests.EdgeCase {
     @Test
-    func `take with wrong type returns nil`() {
+    func `subscript with wrong type traps`() {
         let value = Parser.Machine.Value.make(42)
-        #expect(value.take(String.self) == nil)
+        #expect(value[as: Int.self] == 42)
     }
 }

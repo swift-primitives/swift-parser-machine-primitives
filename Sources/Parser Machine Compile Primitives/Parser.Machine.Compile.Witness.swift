@@ -29,18 +29,18 @@ extension Parser.Machine.Compile {
     /// ```
     public struct Witness<P: Parser_Primitives.Parser.`Protocol`>
     where P.Input: Parser_Primitives.Parser.Input & Sendable,
-          P.ParseOutput: Sendable,
+          P.Output: Sendable,
           P.Failure: Sendable
     {
         @usableFromInline
-        let _compile: (P, inout Parser.Machine.Builder<P.Input, P.Failure>) -> Parser.Machine.Expression<P.Input, P.Failure, P.ParseOutput>
+        let _compile: (P, inout Parser.Machine.Builder<P.Input, P.Failure>) -> Parser.Machine.Expression<P.Input, P.Failure, P.Output>
 
         /// Creates a compilation witness.
         ///
         /// - Parameter compile: A closure that compiles a parser into a Machine expression.
         @inlinable
         public init(
-            compile: @escaping (P, inout Parser.Machine.Builder<P.Input, P.Failure>) -> Parser.Machine.Expression<P.Input, P.Failure, P.ParseOutput>
+            compile: @escaping (P, inout Parser.Machine.Builder<P.Input, P.Failure>) -> Parser.Machine.Expression<P.Input, P.Failure, P.Output>
         ) {
             self._compile = compile
         }
@@ -50,7 +50,7 @@ extension Parser.Machine.Compile {
         public func compile(
             _ parser: P,
             into builder: inout Parser.Machine.Builder<P.Input, P.Failure>
-        ) -> Parser.Machine.Expression<P.Input, P.Failure, P.ParseOutput> {
+        ) -> Parser.Machine.Expression<P.Input, P.Failure, P.Output> {
             _compile(parser, &builder)
         }
     }

@@ -36,7 +36,7 @@ extension Parser.Machine {
     /// ```
     public struct Compiled<P: Parser_Primitives.Parser.`Protocol`>
     where P.Input: Parser_Primitives.Parser.Input & Sendable,
-          P.ParseOutput: Sendable,
+          P.Output: Sendable,
           P.Failure: Sendable
     {
         @usableFromInline
@@ -138,11 +138,11 @@ extension Parser.Machine.Compiled {
 
 extension Parser.Machine.Compiled: Parser_Primitives.Parser.`Protocol` {
     public typealias Input = P.Input
-    public typealias ParseOutput = P.ParseOutput
+    public typealias Output = P.Output
     public typealias Failure = P.Failure
 
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
         let result = cache.getOrCompile(source: source, witness: witness)
-        return try Parser.Machine.run(program: result.program, root: result.root, input: &input, as: ParseOutput.self)
+        return try Parser.Machine.run(program: result.program, root: result.root, input: &input, as: Output.self)
     }
 }
