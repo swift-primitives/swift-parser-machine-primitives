@@ -30,7 +30,7 @@ extension Parser.Machine {
     ///
     /// Note: Parser does not conform to Sendable because the underlying Program contains
     /// closures. For cross-task sharing, use explicit Sendable wrappers with documented invariants.
-    public struct Parser<Input: Parser_Primitives.Parser.Input & ~Copyable, Output, Failure: Error & Sendable>: Parser_Primitives.Parser.`Protocol`
+    public struct Parser<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Output, Failure: Error & Sendable>: Parser_Primitives.Parser.`Protocol`
     where Input: Sendable, Output: Sendable {
         package let program: Program<Input, Failure>
 
@@ -47,7 +47,7 @@ extension Parser.Machine {
     }
 
     /// A reference to a node in the program, used for recursive grammar definitions.
-    public struct Reference<Input: Parser_Primitives.Parser.Input & ~Copyable, Failure: Error & Sendable, Output>: Sendable
+    public struct Reference<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Error & Sendable, Output>: Sendable
     where Input: Sendable {
         package let node: Node<Input, Failure>.ID
 
@@ -63,7 +63,7 @@ extension Parser.Machine {
     ///
     /// Note: Builder does not conform to Sendable. Program construction should
     /// complete on a single task before the resulting Parser is used.
-    public struct Builder<Input: Parser_Primitives.Parser.Input & ~Copyable, Failure: Error & Sendable>: ~Copyable
+    public struct Builder<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Error & Sendable>: ~Copyable
     where Input: Sendable {
         package var inner: Machine_Primitives.Machine.Builder<Leaf<Input, Failure>, Failure, Mode>
 
@@ -89,7 +89,7 @@ extension Parser.Machine {
     }
 
     /// An expression in the machine program, representing a parser that produces Output.
-    public struct Expression<Input: Parser_Primitives.Parser.Input & ~Copyable, Failure: Error & Sendable, Output>: Sendable
+    public struct Expression<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Error & Sendable, Output>: Sendable
     where Input: Sendable {
         package let node: Node<Input, Failure>.ID
 

@@ -38,7 +38,7 @@ extension Parser.Machine {
     /// `Prepared` is conditionally `Sendable` when `P` is `Sendable`.
     /// It contains no mutable state and is safe for concurrent use.
     public struct Prepared<P: Parser_Primitives.Parser.`Protocol`>
-    where P.Input: Parser_Primitives.Parser.Input & Sendable,
+    where P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
           P.Output: Sendable,
           P.Failure: Sendable
     {

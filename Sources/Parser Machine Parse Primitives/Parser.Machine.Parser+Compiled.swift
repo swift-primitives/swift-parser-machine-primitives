@@ -8,7 +8,7 @@
 // MARK: - Compilation Variants
 
 extension Parser.Parse
-where P.Input: Parser_Primitives.Parser.Input & Sendable,
+where P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
       P.Output: Sendable,
       P.Failure: Sendable
 {
@@ -45,7 +45,7 @@ where P.Input: Parser_Primitives.Parser.Input & Sendable,
 
 extension Parser.Parse
 where P: Sendable,
-      P.Input: Parser_Primitives.Parser.Input & Sendable,
+      P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
       P.Output: Sendable,
       P.Failure: Sendable
 {

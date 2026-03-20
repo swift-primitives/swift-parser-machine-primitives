@@ -3,7 +3,7 @@ public import Machine_Primitives
 
 extension Parser.Machine {
     /// Frame is a typealias to the core Machine.Frame with Parsing's Frame.Extra for memoization.
-    public typealias Frame<Input: Parser_Primitives.Parser.Input & ~Copyable, Failure: Error & Sendable> = Machine_Primitives.Machine.Frame<
+    public typealias Frame<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Error & Sendable> = Machine_Primitives.Machine.Frame<
         Node<Input, Failure>.ID,
         Input.Checkpoint,
         Machine_Primitives.Machine.Capture.Mode.Reference,
