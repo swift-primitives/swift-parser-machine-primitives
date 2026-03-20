@@ -36,6 +36,10 @@ let package = Package(
             name: "Parser Machine Parse Primitives",
             targets: ["Parser Machine Parse Primitives"]
         ),
+        .library(
+            name: "Parser Machine Primitives Test Support",
+            targets: ["Parser Machine Primitives Test Support"]
+        ),
     ],
     dependencies: [
         .package(path: "../swift-parser-primitives"),
@@ -167,6 +171,17 @@ let package = Package(
                 "Parser Machine Combinator Primitives",
                 .product(name: "Parser Primitives Test Support", package: "swift-parser-primitives"),
             ]
+        ),
+
+        // MARK: - Test Support
+        .target(
+            name: "Parser Machine Primitives Test Support",
+            dependencies: [
+                "Parser Machine Primitives",
+                .product(name: "Parser Primitives Test Support", package: "swift-parser-primitives"),
+                .product(name: "Identity Primitives Test Support", package: "swift-identity-primitives"),
+            ],
+            path: "Tests/Support"
         ),
     ],
     swiftLanguageModes: [.v6]
