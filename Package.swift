@@ -68,10 +68,6 @@ let package = Package(
             name: "Parser Machine Memoization Primitives",
             dependencies: [
                 "Parser Machine Core Primitives",
-                .product(name: "Identity Primitives", package: "swift-identity-primitives"),
-                .product(name: "Machine Primitives", package: "swift-machine-primitives"),
-                .product(name: "Stack Primitives", package: "swift-stack-primitives"),
-                .product(name: "Slab Primitives", package: "swift-slab-primitives"),
             ]
         ),
 
@@ -81,7 +77,6 @@ let package = Package(
             name: "Parser Machine Compile Primitives",
             dependencies: [
                 "Parser Machine Core Primitives",
-                .product(name: "Machine Primitives", package: "swift-machine-primitives"),
             ]
         ),
 
@@ -91,8 +86,6 @@ let package = Package(
             name: "Parser Machine Combinator Primitives",
             dependencies: [
                 "Parser Machine Core Primitives",
-                .product(name: "Identity Primitives", package: "swift-identity-primitives"),
-                .product(name: "Machine Primitives", package: "swift-machine-primitives"),
             ]
         ),
 
@@ -104,7 +97,6 @@ let package = Package(
                 "Parser Machine Core Primitives",
                 "Parser Machine Memoization Primitives",
                 "Parser Machine Compile Primitives",
-                .product(name: "Machine Primitives", package: "swift-machine-primitives"),
             ]
         ),
 
