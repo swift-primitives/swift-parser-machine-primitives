@@ -1,6 +1,6 @@
 import Parser_Primitives
-public import Machine_Primitives
-public import Identity_Primitives
+internal import Machine_Primitives
+internal import Identity_Primitives
 
 // MARK: - Pure
 

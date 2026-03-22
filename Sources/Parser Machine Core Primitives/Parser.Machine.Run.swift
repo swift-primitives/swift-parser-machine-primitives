@@ -1,8 +1,8 @@
 import Parser_Primitives
-public import Stack_Primitives
-public import Slab_Primitives
-public import Identity_Primitives
-public import Machine_Primitives
+internal import Stack_Primitives
+internal import Slab_Primitives
+internal import Identity_Primitives
+internal import Machine_Primitives
 
 extension Parser.Machine {
     package static func run<Input, Output, Failure>(

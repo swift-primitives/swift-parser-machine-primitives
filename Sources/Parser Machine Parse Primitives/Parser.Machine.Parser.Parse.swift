@@ -5,7 +5,7 @@
 //  Parse accessor providing execution variants.
 //
 
-public import Machine_Primitives
+internal import Machine_Primitives
 
 extension Parser.Machine.Parser {
     /// Accessor for parse execution variants.

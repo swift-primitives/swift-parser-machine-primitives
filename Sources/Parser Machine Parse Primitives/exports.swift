@@ -1,4 +1,4 @@
 @_exported public import Parser_Machine_Core_Primitives
 @_exported public import Parser_Machine_Memoization_Primitives
 @_exported public import Parser_Machine_Compile_Primitives
-public import Machine_Primitives
+internal import Machine_Primitives

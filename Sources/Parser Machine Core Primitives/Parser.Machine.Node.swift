@@ -1,6 +1,6 @@
 import Parser_Primitives
 public import Machine_Primitives
-public import Identity_Primitives
+internal import Identity_Primitives
 
 extension Parser.Machine {
     /// Node is a typealias to the core Machine.Node with Parsing's Leaf type.

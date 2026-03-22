@@ -1,3 +1,3 @@
 @_exported public import Parser_Machine_Core_Primitives
-public import Identity_Primitives
-public import Machine_Primitives
+internal import Identity_Primitives
+internal import Machine_Primitives
