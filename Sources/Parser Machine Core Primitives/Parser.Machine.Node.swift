@@ -10,6 +10,10 @@ extension Parser.Machine {
 
     /// Parsing-specific leaf: a closure-based parser operation.
     @safe
+    // WHY: Category D — structural Sendable workaround (SP-4).
+    // WHY: Stores @Sendable closure but phantom Input: ~Copyable blocks inference.
+    // WHEN TO REMOVE: When compiler gains structural Sendable through phantom params.
+    // TRACKING: unsafe-audit-findings.md Category D SP-4.
     public struct Leaf<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Error & Sendable>: @unchecked Sendable
     where Input: Sendable {
         @usableFromInline
