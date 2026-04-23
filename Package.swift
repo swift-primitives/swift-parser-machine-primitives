@@ -45,7 +45,7 @@ let package = Package(
         .package(path: "../swift-parser-primitives"),
         .package(path: "../swift-stack-primitives"),
         .package(path: "../swift-slab-primitives"),
-        .package(path: "../swift-identity-primitives"),
+        .package(path: "../swift-tagged-primitives"),
         .package(path: "../swift-machine-primitives"),
     ],
     targets: [
@@ -55,7 +55,7 @@ let package = Package(
             name: "Parser Machine Core Primitives",
             dependencies: [
                 .product(name: "Parser Primitives", package: "swift-parser-primitives"),
-                .product(name: "Identity Primitives", package: "swift-identity-primitives"),
+                .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
                 .product(name: "Machine Primitives", package: "swift-machine-primitives"),
                 .product(name: "Stack Primitives", package: "swift-stack-primitives"),
                 .product(name: "Slab Primitives", package: "swift-slab-primitives"),
@@ -126,7 +126,7 @@ let package = Package(
             name: "Parser Machine Memoization Primitives Tests",
             dependencies: [
                 "Parser Machine Memoization Primitives",
-                .product(name: "Identity Primitives Test Support", package: "swift-identity-primitives"),
+                .product(name: "Tagged Primitives Test Support", package: "swift-tagged-primitives"),
             ]
         ),
 
@@ -171,7 +171,7 @@ let package = Package(
             dependencies: [
                 "Parser Machine Primitives",
                 .product(name: "Parser Primitives Test Support", package: "swift-parser-primitives"),
-                .product(name: "Identity Primitives Test Support", package: "swift-identity-primitives"),
+                .product(name: "Tagged Primitives Test Support", package: "swift-tagged-primitives"),
             ],
             path: "Tests/Support"
         ),

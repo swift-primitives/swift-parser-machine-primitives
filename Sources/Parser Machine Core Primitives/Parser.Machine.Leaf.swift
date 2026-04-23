@@ -1,6 +1,6 @@
 import Parser_Primitives
 public import Machine_Primitives
-public import Identity_Primitives
+public import Tagged_Primitives
 
 extension Parser.Machine {
     /// Creates a leaf expression that wraps an existing parser.

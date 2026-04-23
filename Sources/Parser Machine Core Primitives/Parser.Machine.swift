@@ -1,5 +1,5 @@
 @_exported import Parser_Primitives
-public import Identity_Primitives
+public import Tagged_Primitives
 public import Machine_Primitives
 
 extension Parser {

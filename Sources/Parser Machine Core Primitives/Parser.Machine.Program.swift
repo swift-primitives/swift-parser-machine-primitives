@@ -1,6 +1,6 @@
 import Parser_Primitives
 public import Machine_Primitives
-internal import Identity_Primitives
+internal import Tagged_Primitives
 
 extension Parser.Machine {
     /// Program is a typealias to the core Machine.Program with Parsing's Leaf type.

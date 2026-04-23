@@ -1,6 +1,6 @@
 import Parser_Primitives
 internal import Machine_Primitives
-internal import Identity_Primitives
+internal import Tagged_Primitives
 
 // MARK: - Pure
 

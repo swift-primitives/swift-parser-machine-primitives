@@ -1,3 +1,3 @@
 @_exported public import Parser_Machine_Primitives
 @_exported public import Parser_Primitives_Test_Support
-@_exported public import Identity_Primitives_Test_Support
+@_exported public import Tagged_Primitives_Test_Support

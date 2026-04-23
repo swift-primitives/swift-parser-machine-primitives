@@ -1,5 +1,5 @@
 import Parser_Primitives
-internal import Identity_Primitives
+internal import Tagged_Primitives
 internal import Machine_Primitives
 
 extension Parser.Machine {
