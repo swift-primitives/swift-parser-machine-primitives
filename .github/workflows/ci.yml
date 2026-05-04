@@ -27,11 +27,6 @@ jobs:
   docs:
     uses: swift-institute/.github/.github/workflows/swift-docs.yml@main
     with:
-      umbrella-module: Parser_Machine_Primitives
-      umbrella-display-name: "Parser Machine Primitives"
-      umbrella-bundle-id: "swift-parser-machine-primitives.Parser-Machine-Primitives"
-      umbrella-docc-path: "Sources/Parser Machine Primitives/Parser Machine Primitives.docc"
-      exclude-modules: "Parser_Machine_Primitives_Test_Support"
       enable-private-repos: true
     secrets:
       PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
