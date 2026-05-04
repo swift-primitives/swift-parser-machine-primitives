@@ -1,5 +1,5 @@
-import Parser_Primitives
 public import Machine_Primitives
+import Parser_Primitives
 public import Tagged_Primitives
 
 extension Parser.Machine {
@@ -9,17 +9,20 @@ extension Parser.Machine {
         _ parser: P,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
-    where P: Parser_Primitives.Parser.`Protocol` & Sendable,
-          P.Input == Input,
-          P.Output == Output,
-          P.Failure == Failure,
-          Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-          Output: Sendable,
-          Failure: Error & Sendable
+    where
+        P: Parser_Primitives.Parser.`Protocol` & Sendable,
+        P.Input == Input,
+        P.Output == Output,
+        P.Failure == Failure,
+        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Output: Sendable,
+        Failure: Error & Sendable
     {
-        let node = Node<Input, Failure>.leaf(Leaf { (input: inout Input) throws(Failure) -> Value in
-            Value.make(try parser.parse(&input))
-        })
+        let node = Node<Input, Failure>.leaf(
+            Leaf { (input: inout Input) throws(Failure) -> Value in
+                Value.make(try parser.parse(&input))
+            }
+        )
         let nodeID = builder.allocate(node)
         return Expression(node: nodeID)
     }
@@ -31,20 +34,23 @@ extension Parser.Machine {
         mapError: @Sendable @escaping (P.Failure) -> Failure,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
-    where P: Parser_Primitives.Parser.`Protocol` & Sendable,
-          P.Input == Input,
-          P.Output == Output,
-          Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-          Output: Sendable,
-          Failure: Error & Sendable
+    where
+        P: Parser_Primitives.Parser.`Protocol` & Sendable,
+        P.Input == Input,
+        P.Output == Output,
+        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Output: Sendable,
+        Failure: Error & Sendable
     {
-        let node = Node<Input, Failure>.leaf(Leaf { (input: inout Input) throws(Failure) -> Value in
-            do throws(P.Failure) {
-                return Value.make(try parser.parse(&input))
-            } catch {
-                throw mapError(error)
+        let node = Node<Input, Failure>.leaf(
+            Leaf { (input: inout Input) throws(Failure) -> Value in
+                do throws(P.Failure) {
+                    return Value.make(try parser.parse(&input))
+                } catch {
+                    throw mapError(error)
+                }
             }
-        })
+        )
         let nodeID = builder.allocate(node)
         return Expression(node: nodeID)
     }

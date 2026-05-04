@@ -1,7 +1,7 @@
-import Parser_Primitives_Test_Support
-import Testing
 import Parser_Machine_Combinator_Primitives
 import Parser_Machine_Compile_Primitives
+import Parser_Primitives_Test_Support
+import Testing
 
 // MARK: - Test Suite Structure
 
@@ -204,7 +204,7 @@ extension ParserMachineEquivalenceTests.DirectEqualsCompiled {
     func `recursive - nested parentheses depth 5`() throws {
         let machine = balancedParenParser(maxDepth: 100)
 
-        var input = makeInput("((((()))))") // depth 5
+        var input = makeInput("((((()))))")  // depth 5
         let result = try machine.parse(&input)
 
         #expect(result == 5)
@@ -282,7 +282,7 @@ extension ParserMachineEquivalenceTests.Caching {
 private struct OpenParen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
 
-    func parse(_ input: inout Input) throws(Error) -> Void {
+    func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "(") else { throw .expected }
         try! input.advance()
     }
@@ -291,7 +291,7 @@ private struct OpenParen: Parser.`Protocol`, Sendable {
 private struct CloseParen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
 
-    func parse(_ input: inout Input) throws(Error) -> Void {
+    func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ")") else { throw .expected }
         try! input.advance()
     }

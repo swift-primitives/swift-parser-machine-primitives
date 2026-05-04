@@ -1,6 +1,6 @@
+public import Machine_Primitives
 @_exported import Parser_Primitives
 public import Tagged_Primitives
-public import Machine_Primitives
 
 extension Parser {
     public enum Machine {}

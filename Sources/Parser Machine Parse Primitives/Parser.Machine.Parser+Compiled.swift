@@ -8,9 +8,10 @@
 // MARK: - Compilation Variants
 
 extension Parser.Parse
-where P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
-      P.Output: Sendable,
-      P.Failure: Sendable
+where
+    P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
+    P.Output: Sendable,
+    P.Failure: Sendable
 {
     /// Creates a lazily-compiled version of this parser.
     ///
@@ -44,10 +45,11 @@ where P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
 // MARK: - Convenience for Sendable Parsers
 
 extension Parser.Parse
-where P: Sendable,
-      P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
-      P.Output: Sendable,
-      P.Failure: Sendable
+where
+    P: Sendable,
+    P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
+    P.Output: Sendable,
+    P.Failure: Sendable
 {
     /// Creates a lazily-compiled version using leaf compilation.
     ///

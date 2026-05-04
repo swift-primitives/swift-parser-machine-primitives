@@ -1,6 +1,6 @@
+import Parser_Machine_Combinator_Primitives
 import Parser_Primitives_Test_Support
 import Testing
-import Parser_Machine_Combinator_Primitives
 
 @Suite("Parser.Machine.Combinators")
 struct ParserMachineCombinatorTests {

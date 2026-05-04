@@ -1,13 +1,13 @@
+import Parser_Machine_Combinator_Primitives
 import Parser_Primitives_Test_Support
 import Testing
-import Parser_Machine_Combinator_Primitives
 
 // MARK: - Shared Grammar Helpers
 
 private struct OpenParen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
 
-    func parse(_ input: inout Input) throws(Error) -> Void {
+    func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "(") else { throw .expected }
         try! input.advance()
     }
@@ -16,7 +16,7 @@ private struct OpenParen: Parser.`Protocol`, Sendable {
 private struct CloseParen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
 
-    func parse(_ input: inout Input) throws(Error) -> Void {
+    func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ")") else { throw .expected }
         try! input.advance()
     }
@@ -56,7 +56,7 @@ private enum XMLContent: Sendable, Equatable {
 
 private struct OpenBracket: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
-    func parse(_ input: inout Input) throws(Error) -> Void {
+    func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "<") else { throw .expected }
         try! input.advance()
     }
@@ -64,7 +64,7 @@ private struct OpenBracket: Parser.`Protocol`, Sendable {
 
 private struct CloseBracket: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
-    func parse(_ input: inout Input) throws(Error) -> Void {
+    func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ">") else { throw .expected }
         try! input.advance()
     }
@@ -72,7 +72,7 @@ private struct CloseBracket: Parser.`Protocol`, Sendable {
 
 private struct SlashClose: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
-    func parse(_ input: inout Input) throws(Error) -> Void {
+    func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "/") else { throw .expected }
         try! input.advance()
         guard input.first == UInt8(ascii: ">") else { throw .expected }
@@ -104,7 +104,7 @@ private struct ParseOpen: Parser.`Protocol`, Sendable {
 
 private struct ParseClose: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
-    func parse(_ input: inout Input) throws(Error) -> Void {
+    func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ">") else { throw .expected }
         try! input.advance()
     }
@@ -203,13 +203,23 @@ extension ParserMachineRecursiveTests.Integration {
             let content = Parser.Machine.many(elementContent, in: &builder)
 
             let openWithContent = Parser.Machine.sequence(open, content, combine: { (_: Void, c: [XMLContent]) in c }, in: &builder)
-            let nonEmpty = Parser.Machine.sequence(openWithContent, close, combine: { (contents: [XMLContent], _: Void) in
-                XMLElement(name: "e", content: contents)
-            }, in: &builder)
+            let nonEmpty = Parser.Machine.sequence(
+                openWithContent,
+                close,
+                combine: { (contents: [XMLContent], _: Void) in
+                    XMLElement(name: "e", content: contents)
+                },
+                in: &builder
+            )
 
-            let emptyElement = Parser.Machine.sequence(open, slashClose, combine: { (_: Void, _: Void) in
-                XMLElement(name: "e", content: [])
-            }, in: &builder)
+            let emptyElement = Parser.Machine.sequence(
+                open,
+                slashClose,
+                combine: { (_: Void, _: Void) in
+                    XMLElement(name: "e", content: [])
+                },
+                in: &builder
+            )
 
             return Parser.Machine.oneOf([nonEmpty, emptyElement], in: &builder)
         }
@@ -232,15 +242,21 @@ extension ParserMachineRecursiveTests.Integration {
             let startTag = Parser.Machine.leaf(ParseOpen(), mapError: { _ in ParenError.openParen }, in: &builder)
             let endTag = Parser.Machine.leaf(ParseClose(), mapError: { _ in ParenError.closeParen }, in: &builder)
 
-            let emptyElement = startTag.tryMap({ (start: StartTagOutput) throws(ParenError) -> XMLElement in
-                guard start.isEmpty else { throw ParenError.openParen }
-                return XMLElement(name: "e", content: [])
-            }, in: &builder)
+            let emptyElement = startTag.tryMap(
+                { (start: StartTagOutput) throws(ParenError) -> XMLElement in
+                    guard start.isEmpty else { throw ParenError.openParen }
+                    return XMLElement(name: "e", content: [])
+                },
+                in: &builder
+            )
 
-            let openTag = startTag.tryMap({ (start: StartTagOutput) throws(ParenError) -> StartTagOutput in
-                guard !start.isEmpty else { throw ParenError.closeParen }
-                return start
-            }, in: &builder)
+            let openTag = startTag.tryMap(
+                { (start: StartTagOutput) throws(ParenError) -> StartTagOutput in
+                    guard !start.isEmpty else { throw ParenError.closeParen }
+                    return start
+                },
+                in: &builder
+            )
 
             let elementContent = selfRef.expression(in: &builder)
                 .map({ XMLContent.element($0) }, in: &builder)
@@ -248,9 +264,14 @@ extension ParserMachineRecursiveTests.Integration {
             let content = Parser.Machine.many(elementContent, in: &builder)
 
             let withContent = Parser.Machine.sequence(openTag, content, combine: { (_: StartTagOutput, c: [XMLContent]) in c }, in: &builder)
-            let nonEmptyElement = Parser.Machine.sequence(withContent, endTag, combine: { (contents: [XMLContent], _: Void) in
-                XMLElement(name: "e", content: contents)
-            }, in: &builder)
+            let nonEmptyElement = Parser.Machine.sequence(
+                withContent,
+                endTag,
+                combine: { (contents: [XMLContent], _: Void) in
+                    XMLElement(name: "e", content: contents)
+                },
+                in: &builder
+            )
 
             return Parser.Machine.oneOf([emptyElement, nonEmptyElement], in: &builder)
         }

@@ -1,5 +1,5 @@
-import Parser_Primitives
 internal import Machine_Primitives
+import Parser_Primitives
 internal import Tagged_Primitives
 
 // MARK: - Pure
@@ -10,9 +10,10 @@ extension Parser.Machine {
         _ value: Output,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
-    where Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-          Output: Sendable,
-          Failure: Error & Sendable
+    where
+        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Output: Sendable,
+        Failure: Error & Sendable
     {
         let node = Node<Input, Failure>.pure(Value.make(value))
         let nodeID = builder.allocate(node)
@@ -57,8 +58,9 @@ extension Parser.Machine {
         _ transform: @Sendable @escaping (Output) throws(Failure) -> NewOutput,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, NewOutput>
-    where Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-          Failure: Error & Sendable
+    where
+        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Failure: Error & Sendable
     {
         let captureID = builder.captures.insert(transform)
         let node = Node<Input, Failure>.tryMap(
@@ -102,8 +104,9 @@ extension Parser.Machine {
         combine: @Sendable @escaping (A, B) -> C,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, C>
-    where Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-          Failure: Error & Sendable
+    where
+        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Failure: Error & Sendable
     {
         let captureID = builder.captures.insert(combine)
         let node = Node<Input, Failure>.sequence(
@@ -124,8 +127,9 @@ extension Parser.Machine {
         _ alternatives: [Expression<Input, Failure, Output>],
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
-    where Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-          Failure: Error & Sendable
+    where
+        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Failure: Error & Sendable
     {
         let nodeIDs = alternatives.map { $0.node }
         let node = Node<Input, Failure>.oneOf(nodeIDs)
@@ -142,8 +146,9 @@ extension Parser.Machine {
         _ expr: Expression<Input, Failure, T>,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, [T]>
-    where Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-          Failure: Error & Sendable
+    where
+        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Failure: Error & Sendable
     {
         let node = Node<Input, Failure>.many(
             child: expr.node,
@@ -162,8 +167,9 @@ extension Parser.Machine {
         _ expr: Expression<Input, Failure, T>,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, T?>
-    where Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-          Failure: Error & Sendable
+    where
+        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Failure: Error & Sendable
     {
         let wrapSome: @Sendable (T) -> T? = { Swift.Optional.some($0) }
         let captureID = builder.captures.insert(wrapSome)

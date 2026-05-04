@@ -1,6 +1,6 @@
-import Testing
-import Parser_Machine_Core_Primitives
 import Machine_Value_Primitives
+import Parser_Machine_Core_Primitives
+import Testing
 
 // MARK: - Value
 

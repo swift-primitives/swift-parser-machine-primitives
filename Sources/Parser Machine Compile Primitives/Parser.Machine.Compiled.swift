@@ -35,9 +35,10 @@ extension Parser.Machine {
     /// // `prepared` can be shared across tasks
     /// ```
     public struct Compiled<P: Parser_Primitives.Parser.`Protocol`>
-    where P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
-          P.Output: Sendable,
-          P.Failure: Sendable
+    where
+        P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
+        P.Output: Sendable,
+        P.Failure: Sendable
     {
         @usableFromInline
         let source: P

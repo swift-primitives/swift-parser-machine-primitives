@@ -1,5 +1,5 @@
-import Parser_Primitives
 public import Machine_Primitives
+import Parser_Primitives
 
 extension Parser.Machine {
     /// Frame is a typealias to the core Machine.Frame with Parsing's Frame.Extra for memoization.

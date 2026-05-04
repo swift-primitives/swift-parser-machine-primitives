@@ -1,5 +1,5 @@
+@_exported public import Parser_Machine_Combinator_Primitives
+@_exported public import Parser_Machine_Compile_Primitives
 @_exported public import Parser_Machine_Core_Primitives
 @_exported public import Parser_Machine_Memoization_Primitives
-@_exported public import Parser_Machine_Compile_Primitives
-@_exported public import Parser_Machine_Combinator_Primitives
 @_exported public import Parser_Machine_Parse_Primitives

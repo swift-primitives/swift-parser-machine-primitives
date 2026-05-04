@@ -5,11 +5,11 @@
 //  Memoized program execution.
 //
 
-import Parser_Primitives
-internal import Stack_Primitives
-internal import Slab_Primitives
-internal import Tagged_Primitives
 internal import Machine_Primitives
+import Parser_Primitives
+internal import Slab_Primitives
+internal import Stack_Primitives
+internal import Tagged_Primitives
 
 extension Parser.Machine {
     /// Executes the program with memoization.
@@ -23,9 +23,10 @@ extension Parser.Machine {
         memoization: inout Memoization.Table<Input.Checkpoint>,
         as outputType: Output.Type
     ) throws(Failure) -> Output
-    where Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-          Input.Checkpoint: Hashable,
-          Failure: Error & Sendable
+    where
+        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Input.Checkpoint: Hashable,
+        Failure: Error & Sendable
     {
         typealias Value = Parser_Primitives.Parser.Machine.Value
         typealias Frame = Parser_Primitives.Parser.Machine.Frame<Input, Failure>
@@ -59,11 +60,13 @@ extension Parser.Machine {
                 case .oneOf(let alternatives, let index, let savedCheckpoint):
                     if index < alternatives.count {
                         input.setPosition(to: savedCheckpoint)
-                        try! frames.push(.oneOf(
-                            alternatives: alternatives,
-                            index: index + 1,
-                            savedCheckpoint: savedCheckpoint
-                        ))
+                        try! frames.push(
+                            .oneOf(
+                                alternatives: alternatives,
+                                index: index + 1,
+                                savedCheckpoint: savedCheckpoint
+                            )
+                        )
                         return .continueWith(alternatives[index].retag(Recovery.Tag.self))
                     }
 
@@ -275,11 +278,13 @@ extension Parser.Machine {
                 }
                 let checkpoint = input.checkpoint
                 if alternatives.count > 1 {
-                    try! frames.push(.oneOf(
-                        alternatives: alternatives,
-                        index: 1,
-                        savedCheckpoint: checkpoint
-                    ))
+                    try! frames.push(
+                        .oneOf(
+                            alternatives: alternatives,
+                            index: 1,
+                            savedCheckpoint: checkpoint
+                        )
+                    )
                 }
                 current = alternatives[0]
 

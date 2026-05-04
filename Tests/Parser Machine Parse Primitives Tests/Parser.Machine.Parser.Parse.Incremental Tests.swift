@@ -1,13 +1,13 @@
-import Testing
-import Parser_Machine_Parse_Primitives
 import Parser_Machine_Combinator_Primitives
+import Parser_Machine_Parse_Primitives
 import Parser_Primitives_Test_Support
+import Testing
 
 // MARK: - Helpers for Recursive Grammar
 
 private struct OpenParen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
-    func parse(_ input: inout Input) throws(Error) -> Void {
+    func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "(") else { throw .expected }
         try! input.advance()
     }
@@ -15,7 +15,7 @@ private struct OpenParen: Parser.`Protocol`, Sendable {
 
 private struct CloseParen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
-    func parse(_ input: inout Input) throws(Error) -> Void {
+    func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ")") else { throw .expected }
         try! input.advance()
     }

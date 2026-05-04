@@ -1,2 +1,2 @@
-@_exported public import Parser_Machine_Core_Primitives
 internal import Machine_Primitives
+@_exported public import Parser_Machine_Core_Primitives

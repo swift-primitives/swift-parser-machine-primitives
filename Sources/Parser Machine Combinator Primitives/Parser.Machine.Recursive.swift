@@ -1,6 +1,6 @@
+internal import Machine_Primitives
 import Parser_Primitives
 internal import Tagged_Primitives
-internal import Machine_Primitives
 
 extension Parser.Machine {
     /// Creates a parser for a recursive grammar.
@@ -19,9 +19,10 @@ extension Parser.Machine {
         maxDepth: Int? = nil,
         _ build: (inout Builder<Input, Failure>, Reference<Input, Failure, Output>) -> Expression<Input, Failure, Output>
     ) -> Parser<Input, Output, Failure>
-    where Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-          Output: Sendable,
-          Failure: Error & Sendable
+    where
+        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Output: Sendable,
+        Failure: Error & Sendable
     {
         var builder = Builder<Input, Failure>(maxDepth: maxDepth)
 
@@ -42,9 +43,10 @@ extension Parser.Machine {
     public static func build<Input, Output, Failure>(
         _ build: (inout Builder<Input, Failure>) -> Expression<Input, Failure, Output>
     ) -> Parser<Input, Output, Failure>
-    where Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-          Output: Sendable,
-          Failure: Error & Sendable
+    where
+        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Output: Sendable,
+        Failure: Error & Sendable
     {
         var builder = Builder<Input, Failure>()
         let root = build(&builder)

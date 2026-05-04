@@ -1,5 +1,5 @@
-import Testing
 import Parser_Machine_Memoization_Primitives
+import Testing
 
 @Suite("Parser.Machine.Memoization.Edit")
 struct ParserMachineMemoizationEditTests {
