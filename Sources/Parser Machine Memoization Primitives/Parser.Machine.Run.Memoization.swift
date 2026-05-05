@@ -195,7 +195,7 @@ extension Parser.Machine {
             }
 
             // Check memoization before executing node
-            let memoKey = MemoKey(position: input.checkpoint, node: current.rawValue)
+            let memoKey = MemoKey(position: input.checkpoint, node: current.underlying)
             if let cached = memoization.lookup(memoKey) {
                 switch cached {
                 case .success(let output, let endPosition):
@@ -226,7 +226,7 @@ extension Parser.Machine {
             }
 
             // Cache miss: push memoization frame and execute
-            try! frames.push(.extra(.memoization(node: current.rawValue, startPosition: input.checkpoint)))
+            try! frames.push(.extra(.memoization(node: current.underlying, startPosition: input.checkpoint)))
 
             let node = program[current]
 
