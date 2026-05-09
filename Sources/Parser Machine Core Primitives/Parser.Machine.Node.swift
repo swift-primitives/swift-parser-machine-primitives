@@ -4,7 +4,7 @@ internal import Tagged_Primitives
 
 extension Parser.Machine {
     /// Node is a typealias to the core Machine.Node with Parsing's Leaf type.
-    public typealias Node<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Error & Sendable> =
+    public typealias Node<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Swift.Error & Sendable> =
         Machine_Primitives.Machine.Node<Leaf<Input, Failure>, Failure, Machine_Primitives.Machine.Capture.Mode.Reference>
     where Input: Sendable
 
@@ -14,7 +14,7 @@ extension Parser.Machine {
     // WHY: Stores @Sendable closure but phantom Input: ~Copyable blocks inference.
     // WHEN TO REMOVE: When compiler gains structural Sendable through phantom params.
     // TRACKING: unsafe-audit-findings.md Category D SP-4.
-    public struct Leaf<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Error & Sendable>: @unchecked Sendable
+    public struct Leaf<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Swift.Error & Sendable>: @unchecked Sendable
     where Input: Sendable {
         @usableFromInline
         package let run: @Sendable (inout Input) throws(Failure) -> Value

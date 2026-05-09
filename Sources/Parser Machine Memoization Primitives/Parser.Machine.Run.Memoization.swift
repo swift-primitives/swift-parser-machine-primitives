@@ -26,7 +26,7 @@ extension Parser.Machine {
     where
         Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
         Input.Checkpoint: Hashable,
-        Failure: Error & Sendable
+        Failure: Swift.Error & Sendable
     {
         typealias Value = Parser_Primitives.Parser.Machine.Value
         typealias Frame = Parser_Primitives.Parser.Machine.Frame<Input, Failure>
@@ -47,7 +47,7 @@ extension Parser.Machine {
         var depth = 0
         var pendingHandle: Value.Handle? = nil
 
-        func handleMemoizedFailure<E: Error>(
+        func handleMemoizedFailure<E: Swift.Error>(
             error: E,
             frames: inout Stack<Frame>,
             arena: inout Value.Arena,

@@ -13,7 +13,7 @@ extension Parser.Machine {
     ) throws(Failure) -> Output
     where
         Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-        Failure: Error & Sendable
+        Failure: Swift.Error & Sendable
     {
         typealias Value = Parser_Primitives.Parser.Machine.Value
         typealias Frame = Parser_Primitives.Parser.Machine.Frame<Input, Failure>
@@ -41,7 +41,7 @@ extension Parser.Machine {
             }
         }
 
-        func handleFailure<E: Error>(
+        func handleFailure<E: Swift.Error>(
             error: E,
             frames: inout Stack<Frame>,
             arena: inout Value.Arena,

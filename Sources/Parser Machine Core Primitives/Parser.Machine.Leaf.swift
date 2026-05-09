@@ -16,7 +16,7 @@ extension Parser.Machine {
         P.Failure == Failure,
         Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
         Output: Sendable,
-        Failure: Error & Sendable
+        Failure: Swift.Error & Sendable
     {
         let node = Node<Input, Failure>.leaf(
             Leaf { (input: inout Input) throws(Failure) -> Value in
@@ -40,7 +40,7 @@ extension Parser.Machine {
         P.Output == Output,
         Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
         Output: Sendable,
-        Failure: Error & Sendable
+        Failure: Swift.Error & Sendable
     {
         let node = Node<Input, Failure>.leaf(
             Leaf { (input: inout Input) throws(Failure) -> Value in

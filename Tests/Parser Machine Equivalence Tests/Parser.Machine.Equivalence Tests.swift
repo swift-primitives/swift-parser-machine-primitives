@@ -282,7 +282,7 @@ extension ParserMachineEquivalenceTests.Caching {
 private struct OpenParen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
 
-    func parse(_ input: inout Input) throws(Error) {
+    func parse(_ input: inout Input) throws(Self.Error) {
         guard input.first == UInt8(ascii: "(") else { throw .expected }
         try! input.advance()
     }
@@ -291,13 +291,13 @@ private struct OpenParen: Parser.`Protocol`, Sendable {
 private struct CloseParen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
 
-    func parse(_ input: inout Input) throws(Error) {
+    func parse(_ input: inout Input) throws(Self.Error) {
         guard input.first == UInt8(ascii: ")") else { throw .expected }
         try! input.advance()
     }
 }
 
-private enum ParenError: Error, Sendable {
+private enum ParenError: Swift.Error, Sendable {
     case openParen
     case closeParen
 }

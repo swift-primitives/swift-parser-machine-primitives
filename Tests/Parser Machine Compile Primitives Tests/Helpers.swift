@@ -9,7 +9,7 @@ struct ByteParser: Parser.`Protocol`, Sendable {
         case endOfInput
     }
 
-    func parse(_ input: inout Input) throws(Error) -> UInt8 {
+    func parse(_ input: inout Input) throws(Self.Error) -> UInt8 {
         guard let byte = input.first else {
             throw .endOfInput
         }

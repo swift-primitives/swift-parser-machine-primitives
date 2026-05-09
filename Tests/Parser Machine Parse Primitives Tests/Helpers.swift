@@ -9,7 +9,7 @@ struct ByteParser: Parser.`Protocol`, Sendable {
         case endOfInput
     }
 
-    func parse(_ input: inout Input) throws(Error) -> UInt8 {
+    func parse(_ input: inout Input) throws(Self.Error) -> UInt8 {
         guard let byte = input.first else {
             throw .endOfInput
         }
@@ -25,7 +25,7 @@ struct MatchByte: Parser.`Protocol`, Sendable {
         case mismatch(expected: UInt8, actual: UInt8?)
     }
 
-    func parse(_ input: inout Input) throws(Error) -> UInt8 {
+    func parse(_ input: inout Input) throws(Self.Error) -> UInt8 {
         guard let byte = input.first else {
             throw .mismatch(expected: expected, actual: nil)
         }
