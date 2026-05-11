@@ -7,7 +7,7 @@ import Testing
 private struct OpenParen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
 
-    func parse(_ input: inout Input) throws(Self.Error) {
+    func parse(_ input: inout Input) throws(OpenParen.Error) {
         guard input.first == UInt8(ascii: "(") else { throw .expected }
         try! input.advance()
     }
@@ -16,7 +16,7 @@ private struct OpenParen: Parser.`Protocol`, Sendable {
 private struct CloseParen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
 
-    func parse(_ input: inout Input) throws(Self.Error) {
+    func parse(_ input: inout Input) throws(CloseParen.Error) {
         guard input.first == UInt8(ascii: ")") else { throw .expected }
         try! input.advance()
     }
@@ -56,7 +56,7 @@ private enum XMLContent: Sendable, Equatable {
 
 private struct OpenBracket: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
-    func parse(_ input: inout Input) throws(Self.Error) {
+    func parse(_ input: inout Input) throws(OpenBracket.Error) {
         guard input.first == UInt8(ascii: "<") else { throw .expected }
         try! input.advance()
     }
@@ -64,7 +64,7 @@ private struct OpenBracket: Parser.`Protocol`, Sendable {
 
 private struct CloseBracket: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
-    func parse(_ input: inout Input) throws(Self.Error) {
+    func parse(_ input: inout Input) throws(CloseBracket.Error) {
         guard input.first == UInt8(ascii: ">") else { throw .expected }
         try! input.advance()
     }
@@ -72,7 +72,7 @@ private struct CloseBracket: Parser.`Protocol`, Sendable {
 
 private struct SlashClose: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
-    func parse(_ input: inout Input) throws(Self.Error) {
+    func parse(_ input: inout Input) throws(SlashClose.Error) {
         guard input.first == UInt8(ascii: "/") else { throw .expected }
         try! input.advance()
         guard input.first == UInt8(ascii: ">") else { throw .expected }
@@ -88,7 +88,7 @@ private struct StartTagOutput: Sendable {
 
 private struct ParseOpen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
-    func parse(_ input: inout Input) throws(Self.Error) -> StartTagOutput {
+    func parse(_ input: inout Input) throws(ParseOpen.Error) -> StartTagOutput {
         guard input.first == UInt8(ascii: "<") else { throw .expected }
         try! input.advance()
         if input.first == UInt8(ascii: "/") {
@@ -104,7 +104,7 @@ private struct ParseOpen: Parser.`Protocol`, Sendable {
 
 private struct ParseClose: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
-    func parse(_ input: inout Input) throws(Self.Error) {
+    func parse(_ input: inout Input) throws(ParseClose.Error) {
         guard input.first == UInt8(ascii: ">") else { throw .expected }
         try! input.advance()
     }
