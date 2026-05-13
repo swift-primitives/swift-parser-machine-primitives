@@ -10,12 +10,11 @@ extension Parser.Machine {
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
     where
-        P: Parser_Primitives.Parser.`Protocol` & Sendable,
+        P: Parser_Primitives.Parser.`Protocol`,
         P.Input == Input,
         P.Output == Output,
         P.Failure == Failure,
-        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-        Output: Sendable,
+        Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable,
         Failure: Swift.Error & Sendable
     {
         let node = Node<Input, Failure>.leaf(
@@ -31,15 +30,14 @@ extension Parser.Machine {
     @inlinable
     public static func leaf<Input, Output, Failure, P>(
         _ parser: P,
-        mapError: @Sendable @escaping (P.Failure) -> Failure,
+        mapError: @escaping (P.Failure) -> Failure,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
     where
-        P: Parser_Primitives.Parser.`Protocol` & Sendable,
+        P: Parser_Primitives.Parser.`Protocol`,
         P.Input == Input,
         P.Output == Output,
-        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-        Output: Sendable,
+        Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable,
         Failure: Swift.Error & Sendable
     {
         let node = Node<Input, Failure>.leaf(

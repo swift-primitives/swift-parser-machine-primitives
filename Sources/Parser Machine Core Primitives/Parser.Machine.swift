@@ -9,8 +9,17 @@ extension Parser {
 // MARK: - Core Type Aliases
 
 extension Parser.Machine {
+    /// The capture mode used by Parser.Machine programs.
+    ///
+    /// Aliases `Machine.Capture.Mode.Unchecked` per [MEM-SEND-013] Pattern B
+    /// terminal direction: combinator factories drop their `<T: Sendable>` /
+    /// `@Sendable` bounds, the assembled `Parser.Machine.Parser` is non-Sendable
+    /// by construction, and consumers transport across isolation domains via
+    /// `sending` at the program-transport boundary.
+    public typealias Mode = Machine_Primitives.Machine.Capture.Mode.Unchecked
+
     /// Type-erased value container from Machine Primitives.
-    public typealias Value = Machine_Primitives.Machine.Value<Machine_Primitives.Machine.Capture.Mode.Reference>
+    public typealias Value = Machine_Primitives.Machine.Value<Mode>
 
     /// Transform operations from Machine Primitives.
     public typealias Transform = Machine_Primitives.Machine.Transform
@@ -28,10 +37,10 @@ extension Parser.Machine {
 extension Parser.Machine {
     /// A parser built from a defunctionalized program that runs without recursive call-stack growth.
     ///
-    /// Note: Parser does not conform to Sendable because the underlying Program contains
-    /// closures. For cross-task sharing, use explicit Sendable wrappers with documented invariants.
-    public struct Parser<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Output, Failure: Swift.Error & Sendable>: Parser_Primitives.Parser.`Protocol`
-    where Input: Sendable, Output: Sendable {
+    /// `Parser` is NOT `Sendable` per [MEM-SEND-013] Pattern B terminal direction.
+    /// Consumers transport across isolation domains via `sending` at the
+    /// program-transport boundary.
+    public struct Parser<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Output, Failure: Swift.Error & Sendable>: Parser_Primitives.Parser.`Protocol` {
         package let program: Program<Input, Failure>
 
         package let root: Node<Input, Failure>.ID
@@ -47,8 +56,7 @@ extension Parser.Machine {
     }
 
     /// A reference to a node in the program, used for recursive grammar definitions.
-    public struct Reference<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Swift.Error & Sendable, Output>: Sendable
-    where Input: Sendable {
+    public struct Reference<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Swift.Error & Sendable, Output> {
         package let node: Node<Input, Failure>.ID
 
         package init(node: Node<Input, Failure>.ID) {
@@ -56,15 +64,11 @@ extension Parser.Machine {
         }
     }
 
-    /// The capture mode used by Parser.Machine programs.
-    public typealias Mode = Machine_Primitives.Machine.Capture.Mode.Reference
-
     /// A builder context for constructing machine programs.
     ///
     /// Note: Builder does not conform to Sendable. Program construction should
     /// complete on a single task before the resulting Parser is used.
-    public struct Builder<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Swift.Error & Sendable>: ~Copyable
-    where Input: Sendable {
+    public struct Builder<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Swift.Error & Sendable>: ~Copyable {
         package var inner: Machine_Primitives.Machine.Builder<Leaf<Input, Failure>, Failure, Mode>
 
         package init(maxDepth: Int? = nil) {
@@ -89,8 +93,7 @@ extension Parser.Machine {
     }
 
     /// An expression in the machine program, representing a parser that produces Output.
-    public struct Expression<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Swift.Error & Sendable, Output>: Sendable
-    where Input: Sendable {
+    public struct Expression<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Swift.Error & Sendable, Output> {
         package let node: Node<Input, Failure>.ID
 
         @usableFromInline

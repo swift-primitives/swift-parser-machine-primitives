@@ -6,10 +6,10 @@ extension Parser.Machine {
     public typealias Frame<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Swift.Error & Sendable> = Machine_Primitives.Machine.Frame<
         Node<Input, Failure>.ID,
         Input.Checkpoint,
-        Machine_Primitives.Machine.Capture.Mode.Reference,
+        Mode,
         Failure,
         Extra<Input.Checkpoint>
-    > where Input: Sendable
+    >
 
     /// Extension point for Parsing-specific frame cases (memoization).
     public enum Extra<Checkpoint> {

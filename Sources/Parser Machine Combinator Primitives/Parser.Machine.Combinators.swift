@@ -11,8 +11,7 @@ extension Parser.Machine {
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
     where
-        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-        Output: Sendable,
+        Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable,
         Failure: Swift.Error & Sendable
     {
         let node = Node<Input, Failure>.pure(Value.make(value))
@@ -25,8 +24,8 @@ extension Parser.Machine {
 
 extension Parser.Machine.Expression {
     /// Transforms the output of this expression.
-    public func map<T: Sendable>(
-        _ transform: @Sendable @escaping (Output) -> T,
+    public func map<T>(
+        _ transform: @escaping (Output) -> T,
         in builder: inout Parser.Machine.Builder<Input, Failure>
     ) -> Parser.Machine.Expression<Input, Failure, T> {
         let captureID = builder.captures.insert(transform)
@@ -43,8 +42,8 @@ extension Parser.Machine.Expression {
 
 extension Parser.Machine.Expression {
     /// Transforms the output of this expression with a throwing function.
-    public func tryMap<T: Sendable>(
-        _ transform: @Sendable @escaping (Output) throws(Failure) -> T,
+    public func tryMap<T>(
+        _ transform: @escaping (Output) throws(Failure) -> T,
         in builder: inout Parser.Machine.Builder<Input, Failure>
     ) -> Parser.Machine.Expression<Input, Failure, T> {
         Parser.Machine.tryMap(self, transform, in: &builder)
@@ -53,13 +52,13 @@ extension Parser.Machine.Expression {
 
 extension Parser.Machine {
     /// Creates an expression that transforms its child's output with a throwing function.
-    public static func tryMap<Input, Output, Failure, NewOutput: Sendable>(
+    public static func tryMap<Input, Output, Failure, NewOutput>(
         _ expr: Expression<Input, Failure, Output>,
-        _ transform: @Sendable @escaping (Output) throws(Failure) -> NewOutput,
+        _ transform: @escaping (Output) throws(Failure) -> NewOutput,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, NewOutput>
     where
-        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable,
         Failure: Swift.Error & Sendable
     {
         let captureID = builder.captures.insert(transform)
@@ -77,11 +76,11 @@ extension Parser.Machine {
 extension Parser.Machine.Expression {
     /// Chains this expression with another that depends on its output.
     public func flatMap<T>(
-        _ next: @Sendable @escaping (Output) -> Parser.Machine.Expression<Input, Failure, T>,
+        _ next: @escaping (Output) -> Parser.Machine.Expression<Input, Failure, T>,
         in builder: inout Parser.Machine.Builder<Input, Failure>
     ) -> Parser.Machine.Expression<Input, Failure, T> {
         typealias NodeID = Parser.Machine.Node<Input, Failure>.ID
-        let nextFn: @Sendable (Output) -> NodeID = { output in
+        let nextFn: (Output) -> NodeID = { output in
             next(output).node
         }
         let captureID = builder.captures.insert(nextFn)
@@ -98,14 +97,14 @@ extension Parser.Machine.Expression {
 
 extension Parser.Machine {
     /// Sequences two expressions and combines their outputs.
-    public static func sequence<Input, Failure, A, B, C: Sendable>(
+    public static func sequence<Input, Failure, A, B, C>(
         _ a: Expression<Input, Failure, A>,
         _ b: Expression<Input, Failure, B>,
-        combine: @Sendable @escaping (A, B) -> C,
+        combine: @escaping (A, B) -> C,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, C>
     where
-        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable,
         Failure: Swift.Error & Sendable
     {
         let captureID = builder.captures.insert(combine)
@@ -128,7 +127,7 @@ extension Parser.Machine {
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
     where
-        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable,
         Failure: Swift.Error & Sendable
     {
         let nodeIDs = alternatives.map { $0.node }
@@ -142,12 +141,12 @@ extension Parser.Machine {
 
 extension Parser.Machine {
     /// Creates an expression that parses zero or more occurrences.
-    public static func many<Input, Failure, T: Sendable>(
+    public static func many<Input, Failure, T>(
         _ expr: Expression<Input, Failure, T>,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, [T]>
     where
-        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable,
         Failure: Swift.Error & Sendable
     {
         let node = Node<Input, Failure>.many(
@@ -163,15 +162,15 @@ extension Parser.Machine {
 
 extension Parser.Machine {
     /// Creates an expression that optionally parses its child.
-    public static func optional<Input, Failure, T: Sendable>(
+    public static func optional<Input, Failure, T>(
         _ expr: Expression<Input, Failure, T>,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, T?>
     where
-        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
+        Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable,
         Failure: Swift.Error & Sendable
     {
-        let wrapSome: @Sendable (T) -> T? = { Swift.Optional.some($0) }
+        let wrapSome: (T) -> T? = { Swift.Optional.some($0) }
         let captureID = builder.captures.insert(wrapSome)
         let node = Node<Input, Failure>.optional(
             child: expr.node,

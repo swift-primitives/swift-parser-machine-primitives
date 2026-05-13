@@ -39,9 +39,8 @@ extension Parser.Machine {
     /// It contains no mutable state and is safe for concurrent use.
     public struct Prepared<P: Parser_Primitives.Parser.`Protocol`>
     where
-        P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
-        P.Output: Sendable,
-        P.Failure: Sendable
+        P.Input: Parser_Primitives.Parser.Input.`Protocol`,
+        P.Failure: Swift.Error & Sendable
     {
         @usableFromInline
         let program: Program<P.Input, P.Failure>

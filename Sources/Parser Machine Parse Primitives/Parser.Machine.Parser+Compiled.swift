@@ -9,9 +9,8 @@
 
 extension Parser.Parse
 where
-    P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
-    P.Output: Sendable,
-    P.Failure: Sendable
+    P.Input: Parser_Primitives.Parser.Input.`Protocol`,
+    P.Failure: Swift.Error & Sendable
 {
     /// Creates a lazily-compiled version of this parser.
     ///
@@ -30,8 +29,10 @@ where
 
     /// Creates an eagerly-compiled, immutable parser.
     ///
-    /// The returned parser is fully compiled and conditionally `Sendable`.
-    /// Use this when you need to share a compiled parser across tasks.
+    /// The returned parser is fully compiled. It is NOT `Sendable` per
+    /// [MEM-SEND-013] Pattern B terminal direction; consumers transport
+    /// across isolation domains via `sending` at the program-transport
+    /// boundary.
     ///
     /// - Parameter witness: The compilation witness.
     /// - Returns: An immutable prepared parser.
@@ -40,21 +41,11 @@ where
     ) -> Parser.Machine.Prepared<P> {
         Parser.Machine.Prepared(source: parser, witness: witness)
     }
-}
 
-// MARK: - Convenience for Sendable Parsers
-
-extension Parser.Parse
-where
-    P: Sendable,
-    P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
-    P.Output: Sendable,
-    P.Failure: Sendable
-{
     /// Creates a lazily-compiled version using leaf compilation.
     ///
     /// Convenience that uses `.leaf` as the witness. The returned parser
-    /// is NOT `Sendable`. For cross-task sharing, use `prepared()`.
+    /// is NOT `Sendable`.
     ///
     /// - Returns: A lazy-compiling parser wrapper.
     public func compiled() -> Parser.Machine.Compiled<P> {
@@ -64,7 +55,7 @@ where
     /// Creates an eagerly-compiled, immutable parser using leaf compilation.
     ///
     /// Convenience that uses `.leaf` as the witness. The returned parser
-    /// is `Sendable` and safe for cross-task sharing.
+    /// is NOT `Sendable`; consumers transport via `sending` at boundaries.
     ///
     /// - Returns: An immutable prepared parser.
     public func prepared() -> Parser.Machine.Prepared<P> {

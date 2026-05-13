@@ -20,8 +20,7 @@ extension Parser.Machine {
         _ build: (inout Builder<Input, Failure>, Reference<Input, Failure, Output>) -> Expression<Input, Failure, Output>
     ) -> Parser<Input, Output, Failure>
     where
-        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-        Output: Sendable,
+        Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable,
         Failure: Swift.Error & Sendable
     {
         var builder = Builder<Input, Failure>(maxDepth: maxDepth)
@@ -44,8 +43,7 @@ extension Parser.Machine {
         _ build: (inout Builder<Input, Failure>) -> Expression<Input, Failure, Output>
     ) -> Parser<Input, Output, Failure>
     where
-        Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable & ~Copyable,
-        Output: Sendable,
+        Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable,
         Failure: Swift.Error & Sendable
     {
         var builder = Builder<Input, Failure>()

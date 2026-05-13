@@ -29,9 +29,8 @@ extension Parser.Machine.Compile {
     /// ```
     public struct Witness<P: Parser_Primitives.Parser.`Protocol`>
     where
-        P.Input: Parser_Primitives.Parser.Input.`Protocol` & Sendable,
-        P.Output: Sendable,
-        P.Failure: Sendable
+        P.Input: Parser_Primitives.Parser.Input.`Protocol`,
+        P.Failure: Swift.Error & Sendable
     {
         @usableFromInline
         let _compile: (P, inout Parser.Machine.Builder<P.Input, P.Failure>) -> Parser.Machine.Expression<P.Input, P.Failure, P.Output>
@@ -59,7 +58,7 @@ extension Parser.Machine.Compile {
 
 // MARK: - Leaf Witness
 
-extension Parser.Machine.Compile.Witness where P: Sendable {
+extension Parser.Machine.Compile.Witness {
     /// Creates a witness that compiles the parser as a leaf node.
     ///
     /// This wraps the parser's `parse` method directly, treating it as
