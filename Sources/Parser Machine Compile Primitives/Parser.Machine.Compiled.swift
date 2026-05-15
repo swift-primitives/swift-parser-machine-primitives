@@ -36,8 +36,8 @@ extension Parser.Machine {
     /// ```
     public struct Compiled<P: Parser_Primitives.Parser.`Protocol`>
     where
-        P.Input: Parser_Primitives.Parser.Input.`Protocol`,
-        P.Failure: Swift.Error & Sendable
+        P.Input: Input_Primitives.Input.`Protocol`,
+        P.Failure: Swift.Error
     {
         @usableFromInline
         let source: P

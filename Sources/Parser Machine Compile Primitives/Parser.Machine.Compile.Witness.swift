@@ -29,8 +29,8 @@ extension Parser.Machine.Compile {
     /// ```
     public struct Witness<P: Parser_Primitives.Parser.`Protocol`>
     where
-        P.Input: Parser_Primitives.Parser.Input.`Protocol`,
-        P.Failure: Swift.Error & Sendable
+        P.Input: Input_Primitives.Input.`Protocol`,
+        P.Failure: Swift.Error
     {
         @usableFromInline
         let _compile: (P, inout Parser.Machine.Builder<P.Input, P.Failure>) -> Parser.Machine.Expression<P.Input, P.Failure, P.Output>

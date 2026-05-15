@@ -9,7 +9,7 @@ extension Parser.Machine.Memoization {
     /// Memoization table for caching parse results.
     ///
     /// Maps (position, node) keys to cached results.
-    package struct Table<Checkpoint: Hashable & Sendable> {
+    package struct Table<Checkpoint: Hashable> {
         @usableFromInline
         var storage: [Key<Checkpoint>: Entry<Checkpoint>]
 

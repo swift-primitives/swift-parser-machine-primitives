@@ -9,8 +9,8 @@
 
 extension Parser.Parse
 where
-    P.Input: Parser_Primitives.Parser.Input.`Protocol`,
-    P.Failure: Swift.Error & Sendable
+    P.Input: Input_Primitives.Input.`Protocol`,
+    P.Failure: Swift.Error
 {
     /// Creates a lazily-compiled version of this parser.
     ///

@@ -10,7 +10,7 @@ extension Parser.Machine.Memoization {
     ///
     /// Each unique combination of input position and parser node
     /// produces at most one cached result.
-    package struct Key<Checkpoint: Hashable & Sendable>: Hashable, Sendable {
+    package struct Key<Checkpoint: Hashable>: Hashable {
         /// The input position where parsing started.
         package let position: Checkpoint
 
@@ -23,3 +23,8 @@ extension Parser.Machine.Memoization {
         }
     }
 }
+
+// MARK: - Conditional Sendable
+//
+// Data-container conditional Sendable per [MEM-SEND-013] out-of-scope carve-out.
+extension Parser.Machine.Memoization.Key: Sendable where Checkpoint: Sendable {}

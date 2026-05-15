@@ -23,7 +23,7 @@ extension Parser.Machine.Memoization {
     /// ```swift
     /// let edit = Edit(start: 10, oldEnd: 15, newEnd: 10)
     /// ```
-    public struct Edit<Checkpoint: Comparable & Sendable>: Sendable {
+    public struct Edit<Checkpoint: Comparable> {
         /// The position where the edit starts.
         public let start: Checkpoint
 
@@ -42,6 +42,11 @@ extension Parser.Machine.Memoization {
         }
     }
 }
+
+// MARK: - Conditional Sendable
+//
+// Data-container conditional Sendable per [MEM-SEND-013] out-of-scope carve-out.
+extension Parser.Machine.Memoization.Edit: Sendable where Checkpoint: Sendable {}
 
 // MARK: - Convenience Initializers
 

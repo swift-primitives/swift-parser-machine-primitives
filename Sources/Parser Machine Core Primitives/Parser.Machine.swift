@@ -40,7 +40,7 @@ extension Parser.Machine {
     /// `Parser` is NOT `Sendable` per [MEM-SEND-013] Pattern B terminal direction.
     /// Consumers transport across isolation domains via `sending` at the
     /// program-transport boundary.
-    public struct Parser<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Output, Failure: Swift.Error & Sendable>: Parser_Primitives.Parser.`Protocol` {
+    public struct Parser<Input: Input_Primitives.Input.`Protocol` & ~Copyable, Output, Failure: Swift.Error>: Parser_Primitives.Parser.`Protocol` {
         package let program: Program<Input, Failure>
 
         package let root: Node<Input, Failure>.ID
@@ -56,7 +56,7 @@ extension Parser.Machine {
     }
 
     /// A reference to a node in the program, used for recursive grammar definitions.
-    public struct Reference<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Swift.Error & Sendable, Output> {
+    public struct Reference<Input: Input_Primitives.Input.`Protocol` & ~Copyable, Failure: Swift.Error, Output> {
         package let node: Node<Input, Failure>.ID
 
         package init(node: Node<Input, Failure>.ID) {
@@ -68,7 +68,7 @@ extension Parser.Machine {
     ///
     /// Note: Builder does not conform to Sendable. Program construction should
     /// complete on a single task before the resulting Parser is used.
-    public struct Builder<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Swift.Error & Sendable>: ~Copyable {
+    public struct Builder<Input: Input_Primitives.Input.`Protocol` & ~Copyable, Failure: Swift.Error>: ~Copyable {
         package var inner: Machine_Primitives.Machine.Builder<Leaf<Input, Failure>, Failure, Mode>
 
         package init(maxDepth: Int? = nil) {
@@ -93,7 +93,7 @@ extension Parser.Machine {
     }
 
     /// An expression in the machine program, representing a parser that produces Output.
-    public struct Expression<Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable, Failure: Swift.Error & Sendable, Output> {
+    public struct Expression<Input: Input_Primitives.Input.`Protocol` & ~Copyable, Failure: Swift.Error, Output> {
         package let node: Node<Input, Failure>.ID
 
         @usableFromInline

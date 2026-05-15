@@ -24,9 +24,9 @@ extension Parser.Machine {
         as outputType: Output.Type
     ) throws(Failure) -> Output
     where
-        Input: Parser_Primitives.Parser.Input.`Protocol` & ~Copyable,
+        Input: Input_Primitives.Input.`Protocol` & ~Copyable,
         Input.Checkpoint: Hashable,
-        Failure: Swift.Error & Sendable
+        Failure: Swift.Error
     {
         typealias Value = Parser_Primitives.Parser.Machine.Value
         typealias Frame = Parser_Primitives.Parser.Machine.Frame<Input, Failure>
