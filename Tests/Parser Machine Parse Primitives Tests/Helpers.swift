@@ -2,7 +2,7 @@ import Parser_Machine_Combinator_Primitives
 import Parser_Machine_Parse_Primitives
 import Parser_Primitives_Test_Support
 
-typealias Input = ByteInput
+typealias Input = Parser.Test.Input
 
 struct ByteParser: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable {
