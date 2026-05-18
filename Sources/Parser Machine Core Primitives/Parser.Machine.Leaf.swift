@@ -6,11 +6,11 @@ extension Parser.Machine {
     /// Creates a leaf expression that wraps an existing parser.
     @inlinable
     public static func leaf<Input, Output, Failure, P>(
-        _ parser: P,
+        _ parser: consuming P,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
     where
-        P: Parser_Primitives.Parser.`Protocol`,
+        P: Parser_Primitives.Parser.`Protocol` & ~Copyable,
         P.Input == Input,
         P.Output == Output,
         P.Failure == Failure,
@@ -29,12 +29,12 @@ extension Parser.Machine {
     /// Creates a leaf expression that wraps an existing parser with error mapping.
     @inlinable
     public static func leaf<Input, Output, Failure, P>(
-        _ parser: P,
+        _ parser: consuming P,
         mapError: @escaping (P.Failure) -> Failure,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
     where
-        P: Parser_Primitives.Parser.`Protocol`,
+        P: Parser_Primitives.Parser.`Protocol` & ~Copyable,
         P.Input == Input,
         P.Output == Output,
         Input: Input_Primitives.Input.`Protocol` & ~Copyable,

@@ -27,20 +27,20 @@ extension Parser.Machine.Compile {
     /// // Use it to compile
     /// let compiled = myParser.compiled(using: witness)
     /// ```
-    public struct Witness<P: Parser_Primitives.Parser.`Protocol`>
+    public struct Witness<P: Parser_Primitives.Parser.`Protocol` & ~Copyable>
     where
         P.Input: Input_Primitives.Input.`Protocol`,
         P.Failure: Swift.Error
     {
         @usableFromInline
-        let _compile: (P, inout Parser.Machine.Builder<P.Input, P.Failure>) -> Parser.Machine.Expression<P.Input, P.Failure, P.Output>
+        let _compile: (consuming P, inout Parser.Machine.Builder<P.Input, P.Failure>) -> Parser.Machine.Expression<P.Input, P.Failure, P.Output>
 
         /// Creates a compilation witness.
         ///
         /// - Parameter compile: A closure that compiles a parser into a Machine expression.
         @inlinable
         public init(
-            compile: @escaping (P, inout Parser.Machine.Builder<P.Input, P.Failure>) -> Parser.Machine.Expression<P.Input, P.Failure, P.Output>
+            compile: @escaping (consuming P, inout Parser.Machine.Builder<P.Input, P.Failure>) -> Parser.Machine.Expression<P.Input, P.Failure, P.Output>
         ) {
             self._compile = compile
         }
@@ -48,7 +48,7 @@ extension Parser.Machine.Compile {
         /// Compiles the given parser using this witness.
         @inlinable
         public func compile(
-            _ parser: P,
+            _ parser: consuming P,
             into builder: inout Parser.Machine.Builder<P.Input, P.Failure>
         ) -> Parser.Machine.Expression<P.Input, P.Failure, P.Output> {
             _compile(parser, &builder)
@@ -58,7 +58,7 @@ extension Parser.Machine.Compile {
 
 // MARK: - Leaf Witness
 
-extension Parser.Machine.Compile.Witness {
+extension Parser.Machine.Compile.Witness where P: ~Copyable {
     /// Creates a witness that compiles the parser as a leaf node.
     ///
     /// This wraps the parser's `parse` method directly, treating it as
