@@ -52,7 +52,7 @@ extension Parser.Machine {
                 switch frame {
                 case .oneOf(let alternatives, let index, let savedCheckpoint):
                     if index < alternatives.count {
-                        input.setPosition(to: savedCheckpoint)
+                        input.seek(to: savedCheckpoint)
                         try! frames.push(
                             .oneOf(
                                 alternatives: alternatives,
@@ -64,7 +64,7 @@ extension Parser.Machine {
                     }
 
                 case .many(_, let savedCheckpoint, let resultHandles, let finalize):
-                    input.setPosition(to: savedCheckpoint)
+                    input.seek(to: savedCheckpoint)
                     var results: [Value] = []
                     results.reserveCapacity(resultHandles.count)
                     for handle in resultHandles {
@@ -75,11 +75,11 @@ extension Parser.Machine {
                     return .handleReady(handle)
 
                 case .optional(let savedCheckpoint, _, let noneHandle):
-                    input.setPosition(to: savedCheckpoint)
+                    input.seek(to: savedCheckpoint)
                     return .handleReady(noneHandle)
 
                 case .fold(_, let savedCheckpoint, let accHandle, _):
-                    input.setPosition(to: savedCheckpoint)
+                    input.seek(to: savedCheckpoint)
                     return .handleReady(accHandle)
 
                 case .recursiveExit:
