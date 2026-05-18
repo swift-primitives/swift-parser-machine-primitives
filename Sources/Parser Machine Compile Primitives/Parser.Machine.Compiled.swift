@@ -34,30 +34,27 @@ extension Parser.Machine {
     /// let prepared = myParser.compiled(using: .leaf).prepared()
     /// // `prepared` can be shared across tasks
     /// ```
-    public struct Compiled<P: Parser_Primitives.Parser.`Protocol`>
+    public struct Compiled<P: Parser_Primitives.Parser.`Protocol` & ~Copyable>: ~Copyable
     where
         P.Input: Input_Primitives.Input.`Protocol`,
         P.Failure: Swift.Error
     {
         @usableFromInline
-        let source: P
-
-        @usableFromInline
-        let witness: Compile.Witness<P>
-
-        @usableFromInline
         let cache: Cache
 
         /// Creates a compiled parser wrapper.
         ///
+        /// The parser is consumed into the wrapper and held by an internal
+        /// cache that compiles on first use. The parser may be `~Copyable`
+        /// because the cache moves the parser into the Machine program once
+        /// and then drops the slot.
+        ///
         /// - Parameters:
-        ///   - source: The parser to compile.
+        ///   - source: The parser to compile. Consumed.
         ///   - witness: The compilation witness.
         @inlinable
-        public init(source: P, witness: Compile.Witness<P>) {
-            self.source = source
-            self.witness = witness
-            self.cache = Cache()
+        public init(source: consuming P, witness: Compile.Witness<P>) {
+            self.cache = Cache(source: source, witness: witness)
         }
 
         /// Compiles eagerly and returns an immutable, shareable parser.
@@ -68,16 +65,25 @@ extension Parser.Machine {
         ///
         /// - Returns: An immutable prepared parser.
         @inlinable
-        public func prepared() -> Prepared<P> {
-            let result = cache.getOrCompile(source: source, witness: witness)
+        public borrowing func prepared() -> Prepared<P> {
+            let result = cache.getOrCompile()
             return Prepared(program: result.program, root: result.root)
         }
     }
 }
 
+// MARK: - Conditional Copyable Conformance
+
+// `Compiled` is `~Copyable` when `P` is `~Copyable` and `Copyable` when `P`
+// is `Copyable`. For `Copyable` P, this preserves the original reference-
+// sharing semantics: copies of `Compiled` share the same `Cache` instance
+// via class reference, amortizing compilation cost across copies. For
+// `~Copyable` P, no copies exist (the wrapper is uniquely owned).
+extension Parser.Machine.Compiled: Copyable where P: Copyable {}
+
 // MARK: - Result
 
-extension Parser.Machine.Compiled {
+extension Parser.Machine.Compiled where P: ~Copyable {
     /// The cached compilation result.
     @usableFromInline
     struct Result {
@@ -100,8 +106,14 @@ extension Parser.Machine.Compiled {
 
 // MARK: - Cache
 
-extension Parser.Machine.Compiled {
+extension Parser.Machine.Compiled where P: ~Copyable {
     /// Reference-type cache for lazy compilation.
+    ///
+    /// Owns the source parser as an `Optional<P>` so it can consume the
+    /// parser on first compile (moving it into the Machine program) and
+    /// then drop the slot. This is the structural mechanism that allows
+    /// `P: ~Copyable`: the parser is moved exactly once into the program,
+    /// not borrowed N times.
     ///
     /// Not Sendable - use within single isolation domain.
     @usableFromInline
@@ -109,21 +121,34 @@ extension Parser.Machine.Compiled {
         @usableFromInline
         var compiled: Result?
 
+        /// Source parser pending compilation; consumed to `nil` on first
+        /// call to `getOrCompile()` once `compiled` is populated.
         @usableFromInline
-        init() {
+        var source: P?
+
+        @usableFromInline
+        let witness: Parser.Machine.Compile.Witness<P>
+
+        @usableFromInline
+        init(source: consuming P, witness: Parser.Machine.Compile.Witness<P>) {
             self.compiled = nil
+            self.source = consume source
+            self.witness = witness
         }
 
         @usableFromInline
-        func getOrCompile(
-            source: P,
-            witness: Parser.Machine.Compile.Witness<P>
-        ) -> Result {
+        func getOrCompile() -> Result {
             if let existing = compiled {
                 return existing
             }
+            guard let parser = source.take() else {
+                // Unreachable: source is non-nil until consumed here, and
+                // this branch only runs once because `compiled` is populated
+                // before the next call.
+                fatalError("Parser.Machine.Compiled.Cache: source consumed but result missing")
+            }
             var builder = Parser.Machine.Builder<P.Input, P.Failure>()
-            let expression = witness.compile(source, into: &builder)
+            let expression = witness.compile(parser, into: &builder)
             let result = Result(
                 program: builder.build(),
                 root: expression.node
@@ -136,13 +161,13 @@ extension Parser.Machine.Compiled {
 
 // MARK: - Parser Conformance
 
-extension Parser.Machine.Compiled: Parser_Primitives.Parser.`Protocol` {
+extension Parser.Machine.Compiled: Parser_Primitives.Parser.`Protocol` where P: ~Copyable {
     public typealias Input = P.Input
     public typealias Output = P.Output
     public typealias Failure = P.Failure
 
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
-        let result = cache.getOrCompile(source: source, witness: witness)
+    public borrowing func parse(_ input: inout Input) throws(Failure) -> Output {
+        let result = cache.getOrCompile()
         return try Parser.Machine.run(program: result.program, root: result.root, input: &input, as: Output.self)
     }
 }

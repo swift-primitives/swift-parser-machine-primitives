@@ -37,7 +37,7 @@ extension Parser.Machine {
     ///
     /// `Prepared` is conditionally `Sendable` when `P` is `Sendable`.
     /// It contains no mutable state and is safe for concurrent use.
-    public struct Prepared<P: Parser_Primitives.Parser.`Protocol`>
+    public struct Prepared<P: Parser_Primitives.Parser.`Protocol` & ~Copyable>
     where
         P.Input: Input_Primitives.Input.`Protocol`,
         P.Failure: Swift.Error
@@ -64,10 +64,12 @@ extension Parser.Machine {
 
         /// Creates a prepared parser by compiling the source parser.
         ///
+        /// The parser is consumed and moved into the compiled Machine program.
+        ///
         /// - Parameters:
-        ///   - source: The parser to compile.
+        ///   - source: The parser to compile. Consumed.
         ///   - witness: The compilation witness.
-        public init(source: P, witness: Compile.Witness<P>) {
+        public init(source: consuming P, witness: Compile.Witness<P>) {
             var builder = Builder<P.Input, P.Failure>()
             let expression = witness.compile(source, into: &builder)
             self.root = expression.node
@@ -78,7 +80,7 @@ extension Parser.Machine {
 
 // MARK: - Parser Conformance
 
-extension Parser.Machine.Prepared: Parser_Primitives.Parser.`Protocol` {
+extension Parser.Machine.Prepared: Parser_Primitives.Parser.`Protocol` where P: ~Copyable {
     public typealias Input = P.Input
     public typealias Output = P.Output
     public typealias Failure = P.Failure
