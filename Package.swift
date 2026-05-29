@@ -42,11 +42,11 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../swift-parser-primitives"),
-        .package(path: "../swift-stack-primitives"),
-        .package(path: "../swift-slab-primitives"),
-        .package(path: "../swift-tagged-primitives"),
-        .package(path: "../swift-machine-primitives"),
+        .package(url: "https://github.com/swift-primitives/swift-parser-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-stack-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-slab-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-machine-primitives.git", branch: "main"),
     ],
     targets: [
         // MARK: - Core
