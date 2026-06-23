@@ -1,6 +1,7 @@
 internal import Machine_Primitives
 import Parser_Primitives
 internal import Tagged_Primitives
+internal import Parser_Machine_Program_Primitives
 
 extension Parser.Machine {
     package enum Failure {}
