@@ -25,10 +25,6 @@ let package = Package(
             targets: ["Parser Machine Runtime Primitives"]
         ),
         .library(
-            name: "Parser Machine Core Primitives",
-            targets: ["Parser Machine Core Primitives"]
-        ),
-        .library(
             name: "Parser Machine Memoization Primitives",
             targets: ["Parser Machine Memoization Primitives"]
         ),
@@ -74,21 +70,6 @@ let package = Package(
             name: "Parser Machine Runtime Primitives",
             dependencies: [
                 "Parser Machine Program Primitives",
-                .product(name: "Parser Primitives", package: "swift-parser-primitives"),
-                .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
-                .product(name: "Machine Primitives", package: "swift-machine-primitives"),
-                .product(name: "Stack Primitives", package: "swift-stack-primitives"),
-                .product(name: "Slab Primitives", package: "swift-slab-primitives"),
-            ]
-        ),
-
-        // MARK: - Core (DEPRECATED transitional shim — removed in the cleanup wave)
-
-        .target(
-            name: "Parser Machine Core Primitives",
-            dependencies: [
-                "Parser Machine Program Primitives",
-                "Parser Machine Runtime Primitives",
                 .product(name: "Parser Primitives", package: "swift-parser-primitives"),
                 .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
                 .product(name: "Machine Primitives", package: "swift-machine-primitives"),
