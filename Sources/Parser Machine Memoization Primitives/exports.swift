@@ -1,6 +1,5 @@
 internal import Machine_Primitives
 @_exported public import Parser_Machine_Program_Primitives
 @_exported public import Parser_Machine_Runtime_Primitives
-internal import Slab_Primitives
 internal import Stack_Primitives
 internal import Tagged_Primitives

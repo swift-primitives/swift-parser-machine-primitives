@@ -6,11 +6,10 @@
 //
 
 package import Input_Primitives
-internal import Machine_Primitives
-import Parser_Primitives
-internal import Slab_Primitives
+package import Machine_Primitives
+package import Parser_Primitives
 internal import Stack_Primitives
-internal import Tagged_Primitives
+package import Tagged_Primitives
 
 extension Parser.Machine {
     /// Executes the program with memoization.
