@@ -5,6 +5,7 @@
 //  Lazy-compiling parser wrapper with cached program.
 //
 
+public import Input_Primitives
 public import Machine_Primitives
 
 extension Parser.Machine {

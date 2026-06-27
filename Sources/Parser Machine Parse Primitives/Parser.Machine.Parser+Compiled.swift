@@ -5,6 +5,8 @@
 //  Parse accessor extensions for Machine compilation.
 //
 
+public import Input_Primitives
+
 // MARK: - Compilation Variants (Copyable P)
 
 extension Parser.Parse

@@ -5,6 +5,7 @@
 //  Immutable compiled parser wrapper for cross-task sharing.
 //
 
+public import Input_Primitives
 public import Machine_Primitives
 
 extension Parser.Machine {

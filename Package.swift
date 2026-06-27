@@ -51,6 +51,7 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-slab-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-machine-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-input-primitives.git", branch: "main"),
     ],
     targets: [
         // MARK: - Program (IR)
@@ -61,6 +62,7 @@ let package = Package(
                 .product(name: "Parser Primitives", package: "swift-parser-primitives"),
                 .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
                 .product(name: "Machine Primitives", package: "swift-machine-primitives"),
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
 
@@ -75,6 +77,7 @@ let package = Package(
                 .product(name: "Machine Primitives", package: "swift-machine-primitives"),
                 .product(name: "Stack Primitives", package: "swift-stack-primitives"),
                 .product(name: "Slab Primitives", package: "swift-slab-primitives"),
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
 
@@ -85,6 +88,7 @@ let package = Package(
             dependencies: [
                 "Parser Machine Program Primitives",
                 "Parser Machine Runtime Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
 
@@ -95,6 +99,7 @@ let package = Package(
             dependencies: [
                 "Parser Machine Program Primitives",
                 "Parser Machine Runtime Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
 
@@ -105,6 +110,7 @@ let package = Package(
             dependencies: [
                 "Parser Machine Program Primitives",
                 "Parser Machine Runtime Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
 
@@ -116,6 +122,7 @@ let package = Package(
                 "Parser Machine Runtime Primitives",
                 "Parser Machine Memoization Primitives",
                 "Parser Machine Compile Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
 

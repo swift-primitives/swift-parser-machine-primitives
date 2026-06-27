@@ -5,6 +5,8 @@
 //  Witness struct for parser compilation.
 //
 
+public import Input_Primitives
+
 extension Parser.Machine {
     /// Namespace for compilation-related types.
     public enum Compile {}
