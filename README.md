@@ -136,7 +136,7 @@ Neither `Builder` nor the assembled `Parser` is `Sendable`; construct on one tas
 ## Community
 
 <!-- BEGIN: discussion -->
-*Discussion thread will be created at first public flip.*
+*Discussion thread will be created at first public release.*
 <!-- END: discussion -->
 
 ## License
