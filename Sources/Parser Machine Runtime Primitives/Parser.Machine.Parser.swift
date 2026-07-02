@@ -1,7 +1,7 @@
 public import Input_Primitives
 public import Machine_Primitives
-import Parser_Primitives
 public import Parser_Machine_Program_Primitives
+import Parser_Primitives
 
 extension Parser.Machine {
     /// A parser built from a defunctionalized program that runs without recursive call-stack growth.

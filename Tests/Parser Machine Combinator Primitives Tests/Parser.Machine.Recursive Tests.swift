@@ -91,14 +91,13 @@ private struct ParseOpen: Parser.`Protocol`, Sendable {
     func parse(_ input: inout Input) throws(ParseOpen.Error) -> StartTagOutput {
         guard input.first == UInt8(ascii: "<") else { throw .expected }
         try! input.advance()
-        if input.first == UInt8(ascii: "/") {
-            try! input.advance()
-            guard input.first == UInt8(ascii: ">") else { throw .expected }
-            try! input.advance()
-            return StartTagOutput(isEmpty: true)
-        } else {
+        guard input.first == UInt8(ascii: "/") else {
             return StartTagOutput(isEmpty: false)
         }
+        try! input.advance()
+        guard input.first == UInt8(ascii: ">") else { throw .expected }
+        try! input.advance()
+        return StartTagOutput(isEmpty: true)
     }
 }
 

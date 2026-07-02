@@ -1,5 +1,5 @@
-import Parser_Primitives
 internal import Parser_Machine_Program_Primitives
+import Parser_Primitives
 
 extension Parser.Machine {
     package enum Runtime {}
