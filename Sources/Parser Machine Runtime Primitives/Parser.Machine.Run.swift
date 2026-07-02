@@ -131,9 +131,11 @@ extension Parser.Machine {
                         case .continueWith(let recovered):
                             current = recovered.retag(Node.self)
                             checkInvariants("after-tryMap-handleFailure-continueWith")
+
                         case .handleReady(let recoveredHandle):
                             pendingHandle = recoveredHandle
                             checkInvariants("after-tryMap-handleFailure-handleReady")
+
                         case .propagate:
                             throw error
                         }
@@ -206,9 +208,11 @@ extension Parser.Machine {
                     case .continueWith(let recovered):
                         current = recovered.retag(Node.self)
                         checkInvariants("after-leaf-handleFailure-continueWith")
+
                     case .handleReady(let handle):
                         pendingHandle = handle
                         checkInvariants("after-leaf-handleFailure-handleReady")
+
                     case .propagate:
                         throw error
                     }
@@ -278,8 +282,10 @@ extension Parser.Machine {
                     ) {
                     case .continueWith(let recovered):
                         current = recovered.retag(Node.self)
+
                     case .handleReady(let handle):
                         pendingHandle = handle
+
                     case .propagate:
                         fatalError("Depth exceeded with no handler")
                     }

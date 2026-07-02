@@ -59,6 +59,7 @@ extension Parser.Machine.Memoization.Table where Checkpoint: Comparable {
             switch entry {
             case .success(_, let endPosition):
                 return endPosition <= edit.start || key.position >= edit.oldEnd
+
             case .failure:
                 return key.position < edit.start
             }

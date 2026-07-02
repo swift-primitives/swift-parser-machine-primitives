@@ -136,8 +136,10 @@ extension Parser.Machine {
                         ) {
                         case .continueWith(let recovered):
                             current = recovered.retag(Node.self)
+
                         case .handleReady(let recoveredHandle):
                             pendingHandle = recoveredHandle
+
                         case .propagate:
                             throw error
                         }
@@ -203,6 +205,7 @@ extension Parser.Machine {
                     input.seek(to: endPosition)
                     pendingHandle = arena.allocate(output)
                     continue
+
                 case .failure:
                     // Cached failure: propagate through failure handling
                     switch try handleMemoizedFailure(
@@ -216,9 +219,11 @@ extension Parser.Machine {
                     case .continueWith(let recovered):
                         current = recovered.retag(Node.self)
                         continue
+
                     case .handleReady(let handle):
                         pendingHandle = handle
                         continue
+
                     case .propagate:
                         fatalError("Cached failure with no recovery")
                     }
@@ -246,8 +251,10 @@ extension Parser.Machine {
                     ) {
                     case .continueWith(let recovered):
                         current = recovered.retag(Node.self)
+
                     case .handleReady(let handle):
                         pendingHandle = handle
+
                     case .propagate:
                         throw error
                     }
@@ -317,8 +324,10 @@ extension Parser.Machine {
                     ) {
                     case .continueWith(let recovered):
                         current = recovered.retag(Node.self)
+
                     case .handleReady(let handle):
                         pendingHandle = handle
+
                     case .propagate:
                         fatalError("Depth exceeded with no handler")
                     }
