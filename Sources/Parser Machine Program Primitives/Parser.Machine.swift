@@ -2,6 +2,7 @@ public import Machine_Primitives
 @_exported import Parser_Primitives
 
 extension Parser {
+    /// Namespace for the defunctionalized, stack-safe parsing machine.
     public enum Machine {}
 }
 

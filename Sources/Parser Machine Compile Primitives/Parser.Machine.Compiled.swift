@@ -163,10 +163,22 @@ extension Parser.Machine.Compiled where P: ~Copyable {
 // MARK: - Parser Conformance
 
 extension Parser.Machine.Compiled: Parser_Primitives.Parser.`Protocol` where P: ~Copyable {
+    /// The input type consumed by the wrapped parser.
     public typealias Input = P.Input
+
+    /// The output type produced by the wrapped parser.
     public typealias Output = P.Output
+
+    /// The error type thrown by the wrapped parser.
     public typealias Failure = P.Failure
 
+    /// Executes the machine program against the input, compiling it on first call.
+    ///
+    /// The compiled program is cached; subsequent calls reuse it.
+    ///
+    /// - Parameter input: The input to parse from. Modified to reflect consumption.
+    /// - Returns: The parsed value.
+    /// - Throws: `Failure` if parsing fails.
     public borrowing func parse(_ input: inout Input) throws(Failure) -> Output {
         let result = cache.getOrCompile()
         return try Parser.Machine.run(program: result.program, root: result.root, input: &input, as: Output.self)

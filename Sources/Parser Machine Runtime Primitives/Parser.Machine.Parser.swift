@@ -19,6 +19,11 @@ extension Parser.Machine {
             self.root = root
         }
 
+        /// Executes the machine program against the input on an explicit frame stack.
+        ///
+        /// - Parameter input: The input to parse from. Modified to reflect consumption.
+        /// - Returns: The parsed value.
+        /// - Throws: `Failure` if parsing fails.
         public func parse(_ input: inout Input) throws(Failure) -> Output {
             try Parser_Primitives.Parser.Machine.run(program: program, root: root, input: &input, as: Output.self)
         }
