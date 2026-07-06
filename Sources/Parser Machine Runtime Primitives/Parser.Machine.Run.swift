@@ -27,7 +27,7 @@ extension Parser.Machine {
         // - 1 recursiveExit frame per level
         // - Up to 3 additional frames for combinator chains (sequence, map, oneOf, etc.)
         let depthEstimate = (program.maxDepth ?? 10000) * 4
-        var frames = Stack<Frame>(reservingCapacity: try! Index<Frame>.Count(depthEstimate))
+        var frames = Stack<Frame>(minimumCapacity: try! Index<Frame>.Count(depthEstimate))
         var arena = Value.Arena(capacity: depthEstimate * 2)
 
         var depth = 0
@@ -54,7 +54,7 @@ extension Parser.Machine {
                 case .oneOf(let alternatives, let index, let savedCheckpoint):
                     if index < alternatives.count {
                         input.seek(to: savedCheckpoint)
-                        try! frames.push(
+                        frames.push(
                             .oneOf(
                                 alternatives: alternatives,
                                 index: index + 1,
@@ -137,7 +137,15 @@ extension Parser.Machine {
                             checkInvariants("after-tryMap-handleFailure-handleReady")
 
                         case .propagate:
-                            throw error
+                            // `error` is dynamically (and, under SE-0413, statically)
+                            // the machine's unified `Failure`: the caught value comes
+                            // from `transform.apply(…) throws(Failure)`. Binding it to a
+                            // `Failure`-typed local re-throws it WITHOUT weakening the
+                            // enclosing `throws(Failure)` contract. A bare `throw error`
+                            // trips a spurious `any Error` catch-inference in this
+                            // multi-case switch; the explicit binding pins the type.
+                            let failure: Failure = error
+                            throw failure
                         }
                     }
 
@@ -147,7 +155,7 @@ extension Parser.Machine {
 
                 case .sequence(.second(let b, let combine)):
                     let firstHandle = arena.allocate(value)
-                    try! frames.push(.sequence(.combine(firstHandle: firstHandle, combine: combine)))
+                    frames.push(.sequence(.combine(firstHandle: firstHandle, combine: combine)))
                     current = b
 
                 case .sequence(.combine(let firstHandle, let combine)):
@@ -162,14 +170,14 @@ extension Parser.Machine {
                     let handle = arena.allocate(value)
                     resultHandles.append(handle)
                     let checkpoint = input.checkpoint
-                    try! frames.push(.many(child: child, savedCheckpoint: checkpoint, resultHandles: resultHandles, finalize: finalize))
+                    frames.push(.many(child: child, savedCheckpoint: checkpoint, resultHandles: resultHandles, finalize: finalize))
                     current = child
 
                 case .fold(let child, _, let accHandle, let combine):
                     let acc = arena.release(accHandle)
                     let newAcc = combine.combine(using: program.captures, acc, value)
                     let checkpoint = input.checkpoint
-                    try! frames.push(.fold(child: child, savedCheckpoint: checkpoint, accumulatorHandle: arena.allocate(newAcc), combine: combine))
+                    frames.push(.fold(child: child, savedCheckpoint: checkpoint, accumulatorHandle: arena.allocate(newAcc), combine: combine))
                     current = child
 
                 case .optional(_, let wrapSome, let noneHandle):
@@ -222,19 +230,19 @@ extension Parser.Machine {
                 pendingHandle = arena.allocate(value)
 
             case .map(let child, let transform):
-                try! frames.push(.map(transform: transform))
+                frames.push(.map(transform: transform))
                 current = child
 
             case .tryMap(let child, let transform):
-                try! frames.push(.tryMap(transform: transform))
+                frames.push(.tryMap(transform: transform))
                 current = child
 
             case .flatMap(let child, let next):
-                try! frames.push(.flatMap(next: next))
+                frames.push(.flatMap(next: next))
                 current = child
 
             case .sequence(let a, let b, let combine):
-                try! frames.push(.sequence(.second(b: b, combine: combine)))
+                frames.push(.sequence(.second(b: b, combine: combine)))
                 current = a
 
             case .oneOf(let alternatives):
@@ -243,7 +251,7 @@ extension Parser.Machine {
                 }
                 let checkpoint = input.checkpoint
                 if alternatives.count > 1 {
-                    try! frames.push(
+                    frames.push(
                         .oneOf(
                             alternatives: alternatives,
                             index: 1,
@@ -255,19 +263,19 @@ extension Parser.Machine {
 
             case .many(let child, let finalize):
                 let checkpoint = input.checkpoint
-                try! frames.push(.many(child: child, savedCheckpoint: checkpoint, resultHandles: [], finalize: finalize))
+                frames.push(.many(child: child, savedCheckpoint: checkpoint, resultHandles: [], finalize: finalize))
                 current = child
 
             case .fold(let child, let initial, let combine):
                 let checkpoint = input.checkpoint
-                try! frames.push(.fold(child: child, savedCheckpoint: checkpoint, accumulatorHandle: arena.allocate(initial), combine: combine))
+                frames.push(.fold(child: child, savedCheckpoint: checkpoint, accumulatorHandle: arena.allocate(initial), combine: combine))
                 current = child
 
             case .optional(let child, let wrapSome, let noneValue):
                 let checkpoint = input.checkpoint
                 // Pre-allocate the none value in the arena
                 let noneHandle = arena.allocate(noneValue)
-                try! frames.push(.optional(savedCheckpoint: checkpoint, wrapSome: wrapSome, noneHandle: noneHandle))
+                frames.push(.optional(savedCheckpoint: checkpoint, wrapSome: wrapSome, noneHandle: noneHandle))
                 current = child
 
             case .ref(let target):
@@ -291,7 +299,7 @@ extension Parser.Machine {
                     }
                 } else {
                     depth += 1
-                    try! frames.push(.recursiveExit)
+                    frames.push(.recursiveExit)
                     current = target
                     checkInvariants("after-ref-enter")
                 }
