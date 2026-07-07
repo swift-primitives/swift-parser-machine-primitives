@@ -215,7 +215,7 @@ extension ParserMachineEquivalenceTests.DirectEqualsCompiled {
     func `recursive - nested parentheses depth 100`() throws {
         let machine = balancedParenParser(maxDepth: 1000)
 
-        var bytes: Swift.Array<UInt8> = []
+        var bytes: [UInt8] = []
         for _ in 0..<100 { bytes.append(UInt8(ascii: "(")) }
         for _ in 0..<100 { bytes.append(UInt8(ascii: ")")) }
 
@@ -234,7 +234,7 @@ extension ParserMachineEquivalenceTests.StackSafety {
     func `recursive parser at depth 1000 without stack overflow`() throws {
         let machine = balancedParenParser(maxDepth: 2000)
 
-        var bytes: Swift.Array<UInt8> = []
+        var bytes: [UInt8] = []
         for _ in 0..<1000 { bytes.append(UInt8(ascii: "(")) }
         for _ in 0..<1000 { bytes.append(UInt8(ascii: ")")) }
 
@@ -284,6 +284,7 @@ private struct OpenParen: Parser.`Protocol`, Sendable {
 
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "(") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
     }
 }
@@ -293,6 +294,7 @@ private struct CloseParen: Parser.`Protocol`, Sendable {
 
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ")") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
     }
 }

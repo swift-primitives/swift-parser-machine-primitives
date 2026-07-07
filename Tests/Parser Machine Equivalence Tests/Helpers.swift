@@ -13,6 +13,7 @@ struct ByteParser: Parser.`Protocol`, Sendable {
         guard let byte = input.first else {
             throw .endOfInput
         }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
         return byte
     }
@@ -32,12 +33,13 @@ struct MatchByte: Parser.`Protocol`, Sendable {
         guard byte == expected else {
             throw .mismatch(expected: expected, actual: byte)
         }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
         return byte
     }
 }
 
-func makeInput(_ bytes: Swift.Array<UInt8>) -> Input {
+func makeInput(_ bytes: [UInt8]) -> Input {
     Input(bytes)
 }
 
@@ -46,10 +48,11 @@ func makeInput(_ string: Swift.String) -> Input {
 }
 
 extension Input {
-    func remainingBytes() -> Swift.Array<UInt8> {
+    func remainingBytes() -> [UInt8] {
         var copy = self
-        var result: Swift.Array<UInt8> = []
+        var result: [UInt8] = []
         while !copy.isEmpty {
+            // swift-format-ignore: NeverUseForceTry
             result.append(try! copy.advance())
         }
         return result

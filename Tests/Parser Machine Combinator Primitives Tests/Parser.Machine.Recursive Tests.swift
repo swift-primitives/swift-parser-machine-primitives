@@ -9,6 +9,7 @@ private struct OpenParen: Parser.`Protocol`, Sendable {
 
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "(") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
     }
 }
@@ -18,6 +19,7 @@ private struct CloseParen: Parser.`Protocol`, Sendable {
 
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ")") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
     }
 }
@@ -58,6 +60,7 @@ private struct OpenBracket: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "<") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
     }
 }
@@ -66,6 +69,7 @@ private struct CloseBracket: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ">") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
     }
 }
@@ -74,8 +78,10 @@ private struct SlashClose: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "/") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
         guard input.first == UInt8(ascii: ">") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
     }
 }
@@ -90,12 +96,15 @@ private struct ParseOpen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) -> StartTagOutput {
         guard input.first == UInt8(ascii: "<") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
         guard input.first == UInt8(ascii: "/") else {
             return StartTagOutput(isEmpty: false)
         }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
         guard input.first == UInt8(ascii: ">") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
         return StartTagOutput(isEmpty: true)
     }
@@ -105,6 +114,7 @@ private struct ParseClose: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ">") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
     }
 }
@@ -136,7 +146,7 @@ extension ParserMachineRecursiveTests.Unit {
     func `balanced parentheses parses 100 levels`() throws {
         let parser = balancedParenParser(maxDepth: 1000)
 
-        var bytes: Swift.Array<UInt8> = []
+        var bytes: [UInt8] = []
         for _ in 0..<100 { bytes.append(UInt8(ascii: "(")) }
         for _ in 0..<100 { bytes.append(UInt8(ascii: ")")) }
 
@@ -165,7 +175,7 @@ extension ParserMachineRecursiveTests.Integration {
     func `deep nesting 2000 levels without stack overflow`() throws {
         let parser = balancedParenParser(maxDepth: 10000)
 
-        var bytes: Swift.Array<UInt8> = []
+        var bytes: [UInt8] = []
         for _ in 0..<2000 { bytes.append(UInt8(ascii: "(")) }
         for _ in 0..<2000 { bytes.append(UInt8(ascii: ")")) }
 
@@ -179,7 +189,7 @@ extension ParserMachineRecursiveTests.Integration {
     func `deep nesting 5000 levels without stack overflow`() throws {
         let parser = balancedParenParser(maxDepth: 10000)
 
-        var bytes: Swift.Array<UInt8> = []
+        var bytes: [UInt8] = []
         for _ in 0..<5000 { bytes.append(UInt8(ascii: "(")) }
         for _ in 0..<5000 { bytes.append(UInt8(ascii: ")")) }
 
@@ -223,7 +233,7 @@ extension ParserMachineRecursiveTests.Integration {
             return Parser.Machine.oneOf([nonEmpty, emptyElement], in: &builder)
         }
 
-        var bytes: Swift.Array<UInt8> = []
+        var bytes: [UInt8] = []
         for _ in 0..<1000 { bytes.append(UInt8(ascii: "<")) }
         bytes.append(UInt8(ascii: "/"))
         bytes.append(UInt8(ascii: ">"))
@@ -275,7 +285,7 @@ extension ParserMachineRecursiveTests.Integration {
             return Parser.Machine.oneOf([emptyElement, nonEmptyElement], in: &builder)
         }
 
-        var bytes: Swift.Array<UInt8> = []
+        var bytes: [UInt8] = []
         for _ in 0..<50 { bytes.append(UInt8(ascii: "<")) }
         bytes.append(UInt8(ascii: "/"))
         bytes.append(UInt8(ascii: ">"))

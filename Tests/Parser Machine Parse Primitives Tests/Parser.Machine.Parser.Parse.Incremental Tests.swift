@@ -9,6 +9,7 @@ private struct OpenParen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "(") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
     }
 }
@@ -17,6 +18,7 @@ private struct CloseParen: Parser.`Protocol`, Sendable {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ")") else { throw .expected }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
     }
 }

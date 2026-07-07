@@ -13,11 +13,12 @@ struct ByteParser: Parser.`Protocol`, Sendable {
         guard let byte = input.first else {
             throw .endOfInput
         }
+        // swift-format-ignore: NeverUseForceTry
         try! input.advance()
         return byte
     }
 }
 
-func makeInput(_ bytes: Swift.Array<UInt8>) -> Input {
+func makeInput(_ bytes: [UInt8]) -> Input {
     Input(bytes)
 }

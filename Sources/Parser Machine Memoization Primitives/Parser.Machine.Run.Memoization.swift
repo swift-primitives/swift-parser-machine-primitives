@@ -41,6 +41,9 @@ extension Parser.Machine {
         // - 1 recursiveExit frame per level
         // - Up to 3 additional frames for combinator chains (sequence, map, oneOf, etc.)
         let depthEstimate = (program.maxDepth ?? 10000) * 4
+        // Provably-safe conversion: depthEstimate is a non-negative Int
+        // ((maxDepth ?? 10000) * 4), so Count construction cannot fail.
+        // swift-format-ignore: NeverUseForceTry
         var frames = Stack<Frame>(minimumCapacity: try! Index<Frame>.Count(depthEstimate))
         var arena = Value.Arena(capacity: depthEstimate * 2)
 
