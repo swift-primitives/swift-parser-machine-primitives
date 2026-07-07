@@ -6,3 +6,11 @@ parent_config: https://raw.githubusercontent.com/swift-primitives/.github/main/.
 # Package-specific overrides
 disabled_rules:
   - function_parameter_count
+  # force_try: every site in this package is deliberate — the 2 Sources sites
+  # (Parser.Machine.Run.swift:30, Parser.Machine.Run.Memoization.swift:44) are
+  # provably-safe `Index<Frame>.Count(depthEstimate)` conversions of a
+  # non-negative Int (maxDepth ?? 10000, times 4); the 23 Tests sites are
+  # compile-fixture program builds whose validity each test itself asserts.
+  # Disabled repo-wide rather than shielded per-site given 25 deliberate
+  # occurrences (pool-primitives precedent, 2026-07-07).
+  - force_try
