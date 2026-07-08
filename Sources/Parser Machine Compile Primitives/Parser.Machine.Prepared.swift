@@ -55,7 +55,7 @@ extension Parser.Machine {
         ///   - program: The compiled Machine program.
         ///   - root: The root node ID for execution.
         @inlinable
-        init(
+        package init(
             program: Program<P.Input, P.Failure>,
             root: Node<P.Input, P.Failure>.ID
         ) {

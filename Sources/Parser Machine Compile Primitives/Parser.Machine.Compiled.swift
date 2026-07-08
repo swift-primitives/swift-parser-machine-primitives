@@ -136,27 +136,29 @@ extension Parser.Machine.Compiled where P: ~Copyable {
             self.source = consume source
             self.witness = witness
         }
+    }
+}
 
-        @usableFromInline
-        func getOrCompile() -> Result {
-            if let existing = compiled {
-                return existing
-            }
-            guard let parser = source.take() else {
-                // Unreachable: source is non-nil until consumed here, and
-                // this branch only runs once because `compiled` is populated
-                // before the next call.
-                fatalError("Parser.Machine.Compiled.Cache: source consumed but result missing")
-            }
-            var builder = Parser.Machine.Builder<P.Input, P.Failure>()
-            let expression = witness.compile(parser, into: &builder)
-            let result = Result(
-                program: builder.build(),
-                root: expression.node
-            )
-            compiled = result
-            return result
+extension Parser.Machine.Compiled.Cache where P: ~Copyable {
+    @usableFromInline
+    func getOrCompile() -> Parser.Machine.Compiled<P>.Result {
+        if let existing = compiled {
+            return existing
         }
+        guard let parser = source.take() else {
+            // Unreachable: source is non-nil until consumed here, and
+            // this branch only runs once because `compiled` is populated
+            // before the next call.
+            fatalError("Parser.Machine.Compiled.Cache: source consumed but result missing")
+        }
+        var builder = Parser.Machine.Builder<P.Input, P.Failure>()
+        let expression = witness.compile(parser, into: &builder)
+        let result = Parser.Machine.Compiled<P>.Result(
+            program: builder.build(),
+            root: expression.node
+        )
+        compiled = result
+        return result
     }
 }
 
