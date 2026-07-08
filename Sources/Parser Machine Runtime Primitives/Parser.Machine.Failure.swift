@@ -9,12 +9,14 @@ extension Parser.Machine {
 
 extension Parser.Machine.Failure {
     package enum Recovery {
-        package enum Tag {}
-
-        package typealias ID = Tagged<Tag, Ordinal>
-
         case continueWith(ID)
         case handleReady(Parser.Machine.Value.Handle)
         case propagate
     }
+}
+
+extension Parser.Machine.Failure.Recovery {
+    package enum Tag {}
+
+    package typealias ID = Tagged<Tag, Ordinal>
 }

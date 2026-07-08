@@ -7,7 +7,7 @@ import Testing
 @Suite("Parser.Machine.Value")
 struct ParserMachineValueTests {
     @Suite struct Unit {}
-    @Suite struct EdgeCase {}
+    @Suite struct `Edge Case` {}
     @Suite struct Integration {}
     @Suite(.serialized) struct Performance {}
 }
@@ -26,7 +26,7 @@ extension ParserMachineValueTests.Unit {
     }
 }
 
-extension ParserMachineValueTests.EdgeCase {
+extension ParserMachineValueTests.`Edge Case` {
     @Test
     func `subscript with wrong type traps`() {
         let value = Parser.Machine.Value.make(42)

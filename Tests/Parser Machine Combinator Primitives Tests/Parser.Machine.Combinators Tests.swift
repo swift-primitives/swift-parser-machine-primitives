@@ -5,7 +5,7 @@ import Testing
 @Suite("Parser.Machine.Combinators")
 struct ParserMachineCombinatorTests {
     @Suite struct Unit {}
-    @Suite struct EdgeCase {}
+    @Suite struct `Edge Case` {}
     @Suite struct Integration {}
     @Suite(.serialized) struct Performance {}
 }
@@ -125,7 +125,7 @@ extension ParserMachineCombinatorTests.Unit {
 
 // MARK: - Edge Cases
 
-extension ParserMachineCombinatorTests.EdgeCase {
+extension ParserMachineCombinatorTests.`Edge Case` {
     @Test
     func `many returns empty array when no matches`() throws {
         let parser: Parser.Machine.Parser<Input, [UInt8], MatchByte.Error> = Parser.Machine.build { builder in

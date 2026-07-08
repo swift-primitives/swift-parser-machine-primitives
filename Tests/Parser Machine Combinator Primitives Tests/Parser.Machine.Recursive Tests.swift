@@ -4,7 +4,9 @@ import Testing
 
 // MARK: - Shared Grammar Helpers
 
-private struct OpenParen: Parser.`Protocol`, Sendable {
+private struct OpenParen: Parser.`Protocol`, Sendable {}
+
+extension OpenParen {
     enum Error: Swift.Error, Sendable { case expected }
 
     func parse(_ input: inout Input) throws(Error) {
@@ -14,7 +16,9 @@ private struct OpenParen: Parser.`Protocol`, Sendable {
     }
 }
 
-private struct CloseParen: Parser.`Protocol`, Sendable {
+private struct CloseParen: Parser.`Protocol`, Sendable {}
+
+extension CloseParen {
     enum Error: Swift.Error, Sendable { case expected }
 
     func parse(_ input: inout Input) throws(Error) {
@@ -56,7 +60,9 @@ private enum XMLContent: Sendable, Equatable {
     case element(XMLElement)
 }
 
-private struct OpenBracket: Parser.`Protocol`, Sendable {
+private struct OpenBracket: Parser.`Protocol`, Sendable {}
+
+extension OpenBracket {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "<") else { throw .expected }
@@ -65,7 +71,9 @@ private struct OpenBracket: Parser.`Protocol`, Sendable {
     }
 }
 
-private struct CloseBracket: Parser.`Protocol`, Sendable {
+private struct CloseBracket: Parser.`Protocol`, Sendable {}
+
+extension CloseBracket {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ">") else { throw .expected }
@@ -74,7 +82,9 @@ private struct CloseBracket: Parser.`Protocol`, Sendable {
     }
 }
 
-private struct SlashClose: Parser.`Protocol`, Sendable {
+private struct SlashClose: Parser.`Protocol`, Sendable {}
+
+extension SlashClose {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "/") else { throw .expected }
@@ -92,7 +102,9 @@ private struct StartTagOutput: Sendable {
     var isEmpty: Bool
 }
 
-private struct ParseOpen: Parser.`Protocol`, Sendable {
+private struct ParseOpen: Parser.`Protocol`, Sendable {}
+
+extension ParseOpen {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) -> StartTagOutput {
         guard input.first == UInt8(ascii: "<") else { throw .expected }
@@ -110,7 +122,9 @@ private struct ParseOpen: Parser.`Protocol`, Sendable {
     }
 }
 
-private struct ParseClose: Parser.`Protocol`, Sendable {
+private struct ParseClose: Parser.`Protocol`, Sendable {}
+
+extension ParseClose {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ">") else { throw .expected }
@@ -124,7 +138,7 @@ private struct ParseClose: Parser.`Protocol`, Sendable {
 @Suite("Parser.Machine.Recursive")
 struct ParserMachineRecursiveTests {
     @Suite struct Unit {}
-    @Suite struct EdgeCase {}
+    @Suite struct `Edge Case` {}
     @Suite struct Integration {}
     @Suite(.serialized) struct Performance {}
 }

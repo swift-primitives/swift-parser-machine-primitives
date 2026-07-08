@@ -6,7 +6,7 @@ import Testing
 @Suite("Parser.Machine.Compiled")
 struct ParserMachineCompiledTests {
     @Suite struct Unit {}
-    @Suite struct EdgeCase {}
+    @Suite struct `Edge Case` {}
     @Suite struct Integration {}
     @Suite(.serialized) struct Performance {}
 }

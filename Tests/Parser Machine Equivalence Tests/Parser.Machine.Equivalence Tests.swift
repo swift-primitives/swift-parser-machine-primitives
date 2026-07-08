@@ -8,7 +8,7 @@ import Testing
 @Suite("Parser.Machine.Equivalence")
 struct ParserMachineEquivalenceTests {
     @Suite("Direct ≡ Compiled") struct DirectEqualsCompiled {}
-    @Suite struct StackSafety {}
+    @Suite struct `Stack Safety` {}
     @Suite struct Caching {}
 }
 
@@ -229,7 +229,7 @@ extension ParserMachineEquivalenceTests.DirectEqualsCompiled {
 
 // MARK: - Stack Safety
 
-extension ParserMachineEquivalenceTests.StackSafety {
+extension ParserMachineEquivalenceTests.`Stack Safety` {
     @Test
     func `recursive parser at depth 1000 without stack overflow`() throws {
         let machine = balancedParenParser(maxDepth: 2000)
@@ -279,7 +279,9 @@ extension ParserMachineEquivalenceTests.Caching {
 
 // MARK: - Shared Grammar Helpers
 
-private struct OpenParen: Parser.`Protocol`, Sendable {
+private struct OpenParen: Parser.`Protocol`, Sendable {}
+
+extension OpenParen {
     enum Error: Swift.Error, Sendable { case expected }
 
     func parse(_ input: inout Input) throws(Error) {
@@ -289,7 +291,9 @@ private struct OpenParen: Parser.`Protocol`, Sendable {
     }
 }
 
-private struct CloseParen: Parser.`Protocol`, Sendable {
+private struct CloseParen: Parser.`Protocol`, Sendable {}
+
+extension CloseParen {
     enum Error: Swift.Error, Sendable { case expected }
 
     func parse(_ input: inout Input) throws(Error) {

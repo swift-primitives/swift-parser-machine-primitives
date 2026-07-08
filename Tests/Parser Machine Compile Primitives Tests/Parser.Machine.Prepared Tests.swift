@@ -6,7 +6,7 @@ import Testing
 @Suite("Parser.Machine.Prepared")
 struct ParserMachinePreparedTests {
     @Suite struct Unit {}
-    @Suite struct EdgeCase {}
+    @Suite struct `Edge Case` {}
     @Suite struct Integration {}
     @Suite(.serialized) struct Performance {}
 }
@@ -40,7 +40,7 @@ extension ParserMachinePreparedTests.Unit {
 
 // MARK: - Edge Cases
 
-extension ParserMachinePreparedTests.EdgeCase {
+extension ParserMachinePreparedTests.`Edge Case` {
     @Test
     func `prepared parser throws on empty input`() {
         let prepared = Parser.Machine.Prepared(source: ByteParser(), witness: .leaf)

@@ -125,7 +125,7 @@ extension Parser.Machine {
                     pendingHandle = arena.allocate(transformed)
 
                 case .tryMap(let transform):
-                    do {
+                    do throws(Failure) {
                         let transformed = try transform.apply(using: program.captures, value)
                         pendingHandle = arena.allocate(transformed)
                     } catch {
@@ -246,7 +246,7 @@ extension Parser.Machine {
 
             switch node {
             case .leaf(let leaf):
-                do {
+                do throws(Failure) {
                     let value = try leaf.run(&input)
                     pendingHandle = arena.allocate(value)
                 } catch {

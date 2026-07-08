@@ -6,7 +6,7 @@ import Testing
 @Suite("Parser.Machine.Memoization.Table")
 struct ParserMachineMemoizationTableTests {
     @Suite struct Unit {}
-    @Suite struct EdgeCase {}
+    @Suite struct `Edge Case` {}
     @Suite struct Integration {}
     @Suite(.serialized) struct Performance {}
 }
@@ -65,7 +65,7 @@ extension ParserMachineMemoizationTableTests.Unit {
 
 // MARK: - Edge Cases
 
-extension ParserMachineMemoizationTableTests.EdgeCase {
+extension ParserMachineMemoizationTableTests.`Edge Case` {
     @Test
     func `lookup for missing key returns nil`() {
         let table = Parser.Machine.Memoization.Table<Int>()

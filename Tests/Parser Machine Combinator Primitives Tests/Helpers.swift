@@ -3,7 +3,9 @@ import Parser_Primitives_Test_Support
 
 typealias Input = Parser.Test.Input
 
-struct ByteParser: Parser.`Protocol`, Sendable {
+struct ByteParser: Parser.`Protocol`, Sendable {}
+
+extension ByteParser {
     enum Error: Swift.Error, Sendable {
         case endOfInput
     }
@@ -20,7 +22,9 @@ struct ByteParser: Parser.`Protocol`, Sendable {
 
 struct MatchByte: Parser.`Protocol`, Sendable {
     let expected: UInt8
+}
 
+extension MatchByte {
     enum Error: Swift.Error, Sendable {
         case mismatch(expected: UInt8, actual: UInt8?)
     }

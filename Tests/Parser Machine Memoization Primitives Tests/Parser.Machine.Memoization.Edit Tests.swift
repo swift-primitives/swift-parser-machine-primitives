@@ -4,7 +4,7 @@ import Testing
 @Suite("Parser.Machine.Memoization.Edit")
 struct ParserMachineMemoizationEditTests {
     @Suite struct Unit {}
-    @Suite struct EdgeCase {}
+    @Suite struct `Edge Case` {}
     @Suite struct Integration {}
     @Suite(.serialized) struct Performance {}
 }
@@ -39,7 +39,7 @@ extension ParserMachineMemoizationEditTests.Unit {
 
 // MARK: - Edge Cases
 
-extension ParserMachineMemoizationEditTests.EdgeCase {
+extension ParserMachineMemoizationEditTests.`Edge Case` {
     @Test
     func `insert with zero length is a no-op edit`() {
         let edit = Parser.Machine.Memoization.Edit<Int>.insert(at: 5, length: 0)

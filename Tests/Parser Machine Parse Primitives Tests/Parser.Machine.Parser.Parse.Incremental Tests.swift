@@ -5,7 +5,9 @@ import Testing
 
 // MARK: - Helpers for Recursive Grammar
 
-private struct OpenParen: Parser.`Protocol`, Sendable {
+private struct OpenParen: Parser.`Protocol`, Sendable {}
+
+extension OpenParen {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: "(") else { throw .expected }
@@ -14,7 +16,9 @@ private struct OpenParen: Parser.`Protocol`, Sendable {
     }
 }
 
-private struct CloseParen: Parser.`Protocol`, Sendable {
+private struct CloseParen: Parser.`Protocol`, Sendable {}
+
+extension CloseParen {
     enum Error: Swift.Error, Sendable { case expected }
     func parse(_ input: inout Input) throws(Error) {
         guard input.first == UInt8(ascii: ")") else { throw .expected }
@@ -33,7 +37,7 @@ private enum TestError: Swift.Error, Sendable {
 @Suite("Parser.Machine.Parser.Parse.Incremental")
 struct ParserMachineIncrementalTests {
     @Suite struct Unit {}
-    @Suite struct EdgeCase {}
+    @Suite struct `Edge Case` {}
     @Suite struct Integration {}
     @Suite(.serialized) struct Performance {}
 }
@@ -102,7 +106,7 @@ extension ParserMachineIncrementalTests.Unit {
 
 // MARK: - Edge Cases
 
-extension ParserMachineIncrementalTests.EdgeCase {
+extension ParserMachineIncrementalTests.`Edge Case` {
     @Test
     func `invalidate from position clears entries at or after`() throws {
         let parser: Parser.Machine.Parser<Input, (UInt8, UInt8), MatchByte.Error> = Parser.Machine.build { builder in
