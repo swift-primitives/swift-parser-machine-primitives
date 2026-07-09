@@ -3,8 +3,8 @@ import Parser_Machine_Compile_Primitives
 import Parser_Primitives_Test_Support
 import Testing
 
-@Suite("Parser.Machine.Prepared")
-struct ParserMachinePreparedTests {
+@Suite
+struct `Parser.Machine.Prepared Tests` {
     @Suite struct Unit {}
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
@@ -13,7 +13,7 @@ struct ParserMachinePreparedTests {
 
 // MARK: - Unit
 
-extension ParserMachinePreparedTests.Unit {
+extension `Parser.Machine.Prepared Tests`.Unit {
     @Test
     func `prepared parser eagerly compiles from source`() throws {
         let prepared = Parser.Machine.Prepared(source: ByteParser(), witness: .leaf)
@@ -40,7 +40,7 @@ extension ParserMachinePreparedTests.Unit {
 
 // MARK: - Edge Cases
 
-extension ParserMachinePreparedTests.`Edge Case` {
+extension `Parser.Machine.Prepared Tests`.`Edge Case` {
     @Test
     func `prepared parser throws on empty input`() {
         let prepared = Parser.Machine.Prepared(source: ByteParser(), witness: .leaf)

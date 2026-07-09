@@ -34,8 +34,8 @@ private enum TestError: Swift.Error, Sendable {
 
 // MARK: - Suite
 
-@Suite("Parser.Machine.Parser.Parse.Incremental")
-struct ParserMachineIncrementalTests {
+@Suite
+struct `Parser.Machine.Parser.Parse.Incremental Tests` {
     @Suite struct Unit {}
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
@@ -44,7 +44,7 @@ struct ParserMachineIncrementalTests {
 
 // MARK: - Unit
 
-extension ParserMachineIncrementalTests.Unit {
+extension `Parser.Machine.Parser.Parse.Incremental Tests`.Unit {
     @Test
     func `incremental context parses correctly`() throws {
         let parser: Parser.Machine.Parser<Input, UInt8, MatchByte.Error> = Parser.Machine.build { builder in
@@ -106,7 +106,7 @@ extension ParserMachineIncrementalTests.Unit {
 
 // MARK: - Edge Cases
 
-extension ParserMachineIncrementalTests.`Edge Case` {
+extension `Parser.Machine.Parser.Parse.Incremental Tests`.`Edge Case` {
     @Test
     func `invalidate from position clears entries at or after`() throws {
         let parser: Parser.Machine.Parser<Input, (UInt8, UInt8), MatchByte.Error> = Parser.Machine.build { builder in
@@ -149,7 +149,7 @@ extension ParserMachineIncrementalTests.`Edge Case` {
 
 // MARK: - Integration
 
-extension ParserMachineIncrementalTests.Integration {
+extension `Parser.Machine.Parser.Parse.Incremental Tests`.Integration {
     @Test
     func `oneOf with memoization caches failed alternatives`() throws {
         let parser: Parser.Machine.Parser<Input, UInt8, MatchByte.Error> = Parser.Machine.build { builder in

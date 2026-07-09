@@ -3,8 +3,8 @@ import Parser_Machine_Compile_Primitives
 import Parser_Primitives_Test_Support
 import Testing
 
-@Suite("Parser.Machine.Compiled")
-struct ParserMachineCompiledTests {
+@Suite
+struct `Parser.Machine.Compiled Tests` {
     @Suite struct Unit {}
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
@@ -13,7 +13,7 @@ struct ParserMachineCompiledTests {
 
 // MARK: - Unit
 
-extension ParserMachineCompiledTests.Unit {
+extension `Parser.Machine.Compiled Tests`.Unit {
     @Test
     func `compiled parser lazily compiles on first parse`() throws {
         let compiled = Parser.Machine.Compiled(source: ByteParser(), witness: .leaf)

@@ -3,8 +3,8 @@ import Parser_Machine_Memoization_Primitives
 import Tagged_Primitives_Test_Support
 import Testing
 
-@Suite("Parser.Machine.Memoization.Table")
-struct ParserMachineMemoizationTableTests {
+@Suite
+struct `Parser.Machine.Memoization.Table Tests` {
     @Suite struct Unit {}
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
@@ -13,7 +13,7 @@ struct ParserMachineMemoizationTableTests {
 
 // MARK: - Unit
 
-extension ParserMachineMemoizationTableTests.Unit {
+extension `Parser.Machine.Memoization.Table Tests`.Unit {
     @Test
     func `new table is empty`() {
         let table = Parser.Machine.Memoization.Table<Int>()
@@ -65,7 +65,7 @@ extension ParserMachineMemoizationTableTests.Unit {
 
 // MARK: - Edge Cases
 
-extension ParserMachineMemoizationTableTests.`Edge Case` {
+extension `Parser.Machine.Memoization.Table Tests`.`Edge Case` {
     @Test
     func `lookup for missing key returns nil`() {
         let table = Parser.Machine.Memoization.Table<Int>()

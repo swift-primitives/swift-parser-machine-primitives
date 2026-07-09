@@ -4,15 +4,15 @@ import Testing
 
 // MARK: - Value
 
-@Suite("Parser.Machine.Value")
-struct ParserMachineValueTests {
+@Suite
+struct `Parser.Machine.Value Tests` {
     @Suite struct Unit {}
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
     @Suite(.serialized) struct Performance {}
 }
 
-extension ParserMachineValueTests.Unit {
+extension `Parser.Machine.Value Tests`.Unit {
     @Test
     func `make and subscript preserves integer value`() {
         let value = Parser.Machine.Value.make(42)
@@ -26,7 +26,7 @@ extension ParserMachineValueTests.Unit {
     }
 }
 
-extension ParserMachineValueTests.`Edge Case` {
+extension `Parser.Machine.Value Tests`.`Edge Case` {
     @Test
     func `subscript with wrong type traps`() {
         let value = Parser.Machine.Value.make(42)

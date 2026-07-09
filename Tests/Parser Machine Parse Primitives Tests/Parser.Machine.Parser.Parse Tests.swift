@@ -3,8 +3,8 @@ import Parser_Machine_Parse_Primitives
 import Parser_Primitives_Test_Support
 import Testing
 
-@Suite("Parser.Machine.Parser.Parse")
-struct ParserMachineParserParseTests {
+@Suite
+struct `Parser.Machine.Parser.Parse Tests` {
     @Suite struct Unit {}
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
@@ -13,7 +13,7 @@ struct ParserMachineParserParseTests {
 
 // MARK: - Unit
 
-extension ParserMachineParserParseTests.Unit {
+extension `Parser.Machine.Parser.Parse Tests`.Unit {
     @Test
     func `parse accessor callAsFunction executes parser`() throws {
         let parser: Parser.Machine.Parser<Input, UInt8, ByteParser.Error> = Parser.Machine.build { builder in
