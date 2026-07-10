@@ -135,17 +135,18 @@ extension ParseClose {
 
 // MARK: - Suite
 
-@Suite("Parser.Machine.Recursive")
-struct ParserMachineRecursiveTests {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
-    @Suite struct Integration {}
-    @Suite(.serialized) struct Performance {}
+extension Parser.Machine.Test {
+    @Suite struct Recursive {
+        @Suite struct Unit {}
+        @Suite struct `Edge Case` {}
+        @Suite struct Integration {}
+        @Suite(.serialized) struct Performance {}
+    }
 }
 
 // MARK: - Unit
 
-extension ParserMachineRecursiveTests.Unit {
+extension Parser.Machine.Test.Recursive.Unit {
     @Test
     func `balanced parentheses parses three levels`() throws {
         let parser = balancedParenParser(maxDepth: 1000)
@@ -184,7 +185,7 @@ extension ParserMachineRecursiveTests.Unit {
 
 // MARK: - Integration
 
-extension ParserMachineRecursiveTests.Integration {
+extension Parser.Machine.Test.Recursive.Integration {
     @Test
     func `deep nesting 2000 levels without stack overflow`() throws {
         let parser = balancedParenParser(maxDepth: 10000)

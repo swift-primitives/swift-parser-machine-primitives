@@ -2,17 +2,18 @@ import Parser_Machine_Combinator_Primitives
 import Parser_Primitives_Test_Support
 import Testing
 
-@Suite("Parser.Machine.Combinators")
-struct ParserMachineCombinatorTests {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
-    @Suite struct Integration {}
-    @Suite(.serialized) struct Performance {}
+extension Parser.Machine {
+    @Suite struct Test {
+        @Suite struct Unit {}
+        @Suite struct `Edge Case` {}
+        @Suite struct Integration {}
+        @Suite(.serialized) struct Performance {}
+    }
 }
 
 // MARK: - Unit
 
-extension ParserMachineCombinatorTests.Unit {
+extension Parser.Machine.Test.Unit {
     @Test
     func `pure always succeeds with given value`() throws {
         let parser: Parser.Machine.Parser<Input, Int, ByteParser.Error> = Parser.Machine.build { builder in
@@ -125,7 +126,7 @@ extension ParserMachineCombinatorTests.Unit {
 
 // MARK: - Edge Cases
 
-extension ParserMachineCombinatorTests.`Edge Case` {
+extension Parser.Machine.Test.`Edge Case` {
     @Test
     func `many returns empty array when no matches`() throws {
         let parser: Parser.Machine.Parser<Input, [UInt8], MatchByte.Error> = Parser.Machine.build { builder in
