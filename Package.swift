@@ -177,6 +177,11 @@ let package = Package(
             dependencies: [
                 "Parser Machine Parse Primitives",
                 "Parser Machine Combinator Primitives",
+                // F-001 revision-1 regression needs direct `package`-level access
+                // to `Parser.Machine.Memoization.{Table,Key}` to inspect what the
+                // interpreter actually cached — see that test's comment for why a
+                // black-box double-parse cannot observe the write-side fix.
+                "Parser Machine Memoization Primitives",
                 .product(name: "Parser Primitives Test Support", package: "swift-parser-primitives"),
             ]
         ),

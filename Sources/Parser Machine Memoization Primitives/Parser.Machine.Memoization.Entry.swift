@@ -22,7 +22,10 @@ extension Parser.Machine.Memoization {
         /// `Parser.Machine.run<Input, Output, Failure>` invocation that
         /// populated this entry — see `handleMemoizedFailure`'s
         /// `.extra(.memoization)` arm in `Parser.Machine.Run.Memoization.swift`,
-        /// the sole writer of this case.
+        /// the sole writer of this case, which only stores when the error is
+        /// actually `Failure`-typed (a `Parser.Machine.Runtime.Error` such as
+        /// the `.ref` depth-exceeded case is deliberately never boxed here —
+        /// see that arm's comment).
         case failure(any Swift.Error)
     }
 }

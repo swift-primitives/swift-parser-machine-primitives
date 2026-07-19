@@ -1,4 +1,6 @@
+import Machine_Node_Primitives
 import Parser_Machine_Combinator_Primitives
+import Parser_Machine_Memoization_Primitives
 import Parser_Machine_Parse_Primitives
 import Parser_Primitives_Test_Support
 import Testing
@@ -340,5 +342,87 @@ extension `Parser.Machine.Parser.Parse.Incremental Tests`.Integration {
         var input2 = Input([65])
         let result = try ctx(&input2)
         #expect(result == 65)
+    }
+
+    // MARK: F-001 revision-1 regression
+
+    @Test
+    func `depth-exceeded ref failure is never cached as a foreign-typed entry`() throws {
+        // A grammar whose recursion is zero-width (each level re-enters via a
+        // bare `.ref`, not by consuming input on that specific edge) so that
+        // `.ref`'s `program.maxDepth` guard — not a real grammar failure —
+        // is what trips, at `Run.Memoization.swift`'s `case .ref`. `maxDepth:
+        // 1` together with two `(` characters guarantees the guard fires
+        // (level 0 enters at depth 0 < 1; level 1's `.ref` dispatch sees
+        // depth 1 >= 1).
+        var refNodeID: Parser.Machine.Node<Input, TestError>.ID!
+        let parser: Parser.Machine.Parser<Input, Int, TestError> = Parser.Machine.recursive(maxDepth: 1) { builder, selfRef in
+            let empty = Parser.Machine.pure(0, in: &builder)
+            let open = Parser.Machine.leaf(OpenParen(), mapError: { _ in TestError.openParen }, in: &builder)
+            let close = Parser.Machine.leaf(CloseParen(), mapError: { _ in TestError.closeParen }, in: &builder)
+            let inner = selfRef.expression(in: &builder)
+            refNodeID = inner.node
+
+            let recursive = Parser.Machine.sequence(open, inner, combine: { (_: Void, depth: Int) in depth }, in: &builder)
+            let withClose = Parser.Machine.sequence(recursive, close, combine: { (depth: Int, _: Void) in depth + 1 }, in: &builder)
+
+            return Parser.Machine.oneOf([withClose, empty], in: &builder)
+        }
+
+        var ctx = parser.parse.incremental
+        var input = makeInput("((")
+
+        // `oneOf([withClose, empty])` is available at every recursion level,
+        // so the depth-exceeded `.ref` always has a recovery frame above it
+        // and this always completes — it must not crash with either the
+        // targeted fatalError (the cache-hit `.propagate` arm's
+        // `storedError as? Failure` type-mismatch, `Run.Memoization.swift`
+        // ~line 271) or the *other*, unrelated, out-of-scope
+        // "Depth exceeded with no handler" fatalError that fires only when
+        // literally no recovery frame exists anywhere (not the case here).
+        let result = try ctx(&input)
+        #expect(result == 0)
+
+        // `inner`'s own `.ref` dispatch is what hits `program.maxDepth` (see
+        // above), and unwinding it pushes `Runtime.Error.depthExceeded`
+        // through `handleMemoizedFailure`'s `.extra(.memoization)` arm — the
+        // exact storage arm that used to box a `Runtime.Error` into
+        // `.failure(any Swift.Error)` regardless of its type. A repeat cache
+        // hit on such an entry, reached with no recovery frame available (a
+        // second reference to the same recursive node whose enclosing
+        // `oneOf`'s alternatives are already exhausted — see the revision-1
+        // note in REPORT.md for the full construction and why it cannot be
+        // driven through the public `Incremental` API a second time: the
+        // wrapping `oneOf` is *also* memoized at the same position and a
+        // second top-level parse hits that entry first), is what the
+        // targeted fatalError guards against.
+        //
+        // Directly inspecting what got cached at `inner`'s own key is the
+        // closest reachable way to observe the write-side fix: scan the
+        // small range of positions a single/double `(` could plausibly
+        // start `inner` at, and confirm nothing cached there is anything
+        // other than `Failure`-typed (i.e. `TestError`) — pre-revision, the
+        // entry at this key is `.failure(Runtime.Error.depthExceeded)`, so
+        // the `is TestError` check below fails (captured as this test's RED,
+        // `Parser.Machine.Run.Memoization.swift:100` unconditionally boxing
+        // `error`); post-revision, storage is guarded to only accept
+        // `Failure`-typed errors, so no entry is cached at this key at all,
+        // and the `.none` arm below is taken (GREEN).
+        for position: Input.Checkpoint in [0, 1, 2, 3] {
+            let key = Parser.Machine.Memoization.Key<Input.Checkpoint>(position: position, node: refNodeID.underlying)
+            switch ctx.memoization.lookup(key) {
+            case .none:
+                break
+
+            case .success:
+                Issue.record("expected no success entry for a node that only ever depth-exceeds at position \(position)")
+
+            case .failure(let storedError):
+                #expect(
+                    storedError is TestError,
+                    "cached failure at position \(position) is \(type(of: storedError)), not TestError"
+                )
+            }
+        }
     }
 }

@@ -96,8 +96,38 @@ extension Parser.Machine {
                     depth -= 1
 
                 case .extra(.memoization(let node, let startPosition)):
-                    let key = MemoKey(position: startPosition, node: node)
-                    memoization.store(.failure(error), for: key)
+                    // Only a value that is actually this run's `Failure` may be
+                    // memoized here: `error` is `E: Swift.Error` generically, and
+                    // the `.ref` depth-exceeded call site (below) passes a
+                    // `Parser.Machine.Runtime.Error` — a *different* type from the
+                    // grammar's own `Failure` — when the machine hits
+                    // `program.maxDepth`. Storing that verbatim used to let a
+                    // `Runtime.Error` masquerade as this table's `Failure`-typed
+                    // `.failure` payload, so a later cache hit reaching the
+                    // `.propagate` arm below would downcast it to `Failure` and
+                    // crash (`storedError as? Failure` failing is exactly the
+                    // "cached failure type mismatch" `fatalError`).
+                    //
+                    // Skipping the store for a non-`Failure` error is also the
+                    // *sound* choice, not just the crash-avoiding one: depth is a
+                    // function of the call path that reached this (position, node)
+                    // pair, not of position alone, so a depth-exceeded outcome is
+                    // not a stable fact to cache at this key in the first place —
+                    // a different call path could reach the same (position, node)
+                    // pair at a different depth and get a different answer. Not
+                    // caching it means the depth check is simply re-evaluated
+                    // (against the *current* depth) the next time this node is
+                    // reached, which is the only sound behavior.
+                    //
+                    // This makes every `.failure` entry in the table provably
+                    // `Failure`-typed by construction — this is the only writer of
+                    // `.failure` (see `Entry.failure`'s doc comment) — so the
+                    // `storedError as? Failure` downcast at the cache-hit
+                    // `.propagate` arm, below, can no longer fail.
+                    if let failure = error as? Failure {
+                        let key = MemoKey(position: startPosition, node: node)
+                        memoization.store(.failure(failure), for: key)
+                    }
 
                 case .map, .tryMap, .flatMap, .sequence:
                     continue
@@ -260,15 +290,26 @@ extension Parser.Machine {
                         // cached entry and must re-throw the *same* typed
                         // failure that originally propagated to the root
                         // without a recovery frame — not crash the process.
-                        // `storedError` was boxed as `Failure` at the point
-                        // this entry was populated (`handleMemoizedFailure`'s
-                        // `.extra(.memoization)` arm, above), so the downcast
-                        // cannot fail in practice; a mismatch would mean this
-                        // `Table` was populated by a differently-`Failure`-typed
-                        // `run` invocation, which its sole owner
-                        // (`Parser.Machine.Parser.Parse.Incremental`) never does.
+                        //
+                        // `storedError as? Failure` is provably non-failing here,
+                        // not merely "unreachable in practice": `.extra(.memoization)`
+                        // (above) is the *only* writer of `.failure`, and it now
+                        // only stores when `error as? Failure` itself already
+                        // succeeded — so every `.failure` entry in this table is,
+                        // by construction, a boxed `Failure`. (An earlier version
+                        // of this guard rested that claim on a different premise —
+                        // "this `Table`'s sole owner never mixes `Failure` types" —
+                        // which was false: the `.ref` depth-exceeded path below
+                        // used to pass a `Parser.Machine.Runtime.Error`, a
+                        // *different* type from this run's `Failure`, into this
+                        // same storage arm, and it got boxed verbatim. That is
+                        // what the `guard`/`fatalError` below defends against; it
+                        // is kept as a documented invariant check, not a reachable
+                        // error path.)
                         guard let typedFailure = storedError as? Failure else {
-                            fatalError("Internal error: cached failure type mismatch")
+                            preconditionFailure(
+                                "Internal error: cached failure type mismatch — every `.failure` entry must be `Failure`-typed by construction (see `.extra(.memoization)`, above)"
+                            )
                         }
                         throw typedFailure
                     }
