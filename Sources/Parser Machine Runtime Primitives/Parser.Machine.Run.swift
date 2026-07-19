@@ -169,19 +169,41 @@ extension Parser.Machine {
                 case .oneOf:
                     pendingHandle = arena.allocate(value)
 
-                case .many(let child, _, var resultHandles, let finalize):
+                case .many(let child, let priorCheckpoint, var resultHandles, let finalize):
                     let handle = arena.allocate(value)
                     resultHandles.append(handle)
                     let checkpoint = input.checkpoint
-                    frames.push(.many(child: child, savedCheckpoint: checkpoint, resultHandles: resultHandles, finalize: finalize))
-                    current = child
+                    if checkpoint == priorCheckpoint {
+                        // PEG progress guard: the child succeeded without
+                        // consuming input. Looping back into it would repeat
+                        // the identical zero-width success forever, growing
+                        // `resultHandles`/the arena without bound. Standard
+                        // packrat semantics: stop the repetition as soon as
+                        // the child stops making progress, keeping the
+                        // result it already produced.
+                        var results: [Value] = []
+                        results.reserveCapacity(resultHandles.count)
+                        for resultHandle in resultHandles {
+                            results.append(arena.release(resultHandle))
+                        }
+                        let finalValue = finalize.finalize(using: program.captures, results)
+                        pendingHandle = arena.allocate(finalValue)
+                    } else {
+                        frames.push(.many(child: child, savedCheckpoint: checkpoint, resultHandles: resultHandles, finalize: finalize))
+                        current = child
+                    }
 
-                case .fold(let child, _, let accHandle, let combine):
+                case .fold(let child, let priorCheckpoint, let accHandle, let combine):
                     let acc = arena.release(accHandle)
                     let newAcc = combine.combine(using: program.captures, acc, value)
                     let checkpoint = input.checkpoint
-                    frames.push(.fold(child: child, savedCheckpoint: checkpoint, accumulatorHandle: arena.allocate(newAcc), combine: combine))
-                    current = child
+                    if checkpoint == priorCheckpoint {
+                        // Same progress guard as `.many`, above.
+                        pendingHandle = arena.allocate(newAcc)
+                    } else {
+                        frames.push(.fold(child: child, savedCheckpoint: checkpoint, accumulatorHandle: arena.allocate(newAcc), combine: combine))
+                        current = child
+                    }
 
                 case .optional(_, let wrapSome, let noneHandle):
                     // Release the pre-allocated none value since we have a result

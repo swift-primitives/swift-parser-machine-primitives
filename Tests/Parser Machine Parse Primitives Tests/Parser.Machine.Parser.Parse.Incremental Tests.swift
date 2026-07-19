@@ -261,6 +261,21 @@ extension `Parser.Machine.Parser.Parse.Incremental Tests`.`Edge Case` {
 
         #expect(incrementalResult == freshResult)
     }
+
+    // MARK: F-004 regression (memoized interpreter)
+
+    @Test
+    func `many under memoization terminates when child succeeds without consuming input`() throws {
+        let parser: Parser.Machine.Parser<Input, [Int], MatchByte.Error> = Parser.Machine.build { builder in
+            let p = Parser.Machine.pure(7, in: &builder)
+            return Parser.Machine.many(p, in: &builder)
+        }
+
+        var ctx = parser.parse.incremental
+        var input = Input([65, 66, 67])
+        let result = try ctx(&input)
+        #expect(result == [7])
+    }
 }
 
 // MARK: - Integration

@@ -170,4 +170,34 @@ extension Parser.Machine.Test.`Edge Case` {
             _ = try parser.parse(&input)
         }
     }
+
+    // MARK: F-004 regression
+
+    @Test
+    func `many terminates when child succeeds without consuming input via pure`() throws {
+        let parser: Parser.Machine.Parser<Input, [Int], ByteParser.Error> = Parser.Machine.build { builder in
+            let p = Parser.Machine.pure(1, in: &builder)
+            return Parser.Machine.many(p, in: &builder)
+        }
+
+        var input = Input([65, 66, 67])
+        let result = try parser.parse(&input)
+        #expect(result == [1])
+        #expect(input.remainingBytes() == [65, 66, 67])
+    }
+
+    @Test
+    func `many terminates when child succeeds without consuming input via optional`() throws {
+        let parser: Parser.Machine.Parser<Input, [UInt8?], MatchByte.Error> = Parser.Machine.build { builder in
+            let neverMatches = Parser.Machine.leaf(MatchByte(expected: 0xFF), in: &builder)
+                .map({ $0 }, in: &builder)
+            let opt = Parser.Machine.optional(neverMatches, in: &builder)
+            return Parser.Machine.many(opt, in: &builder)
+        }
+
+        var input = Input([1, 2, 3])
+        let result = try parser.parse(&input)
+        #expect(result == [nil])
+        #expect(input.remainingBytes() == [1, 2, 3])
+    }
 }
