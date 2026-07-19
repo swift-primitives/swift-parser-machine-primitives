@@ -97,7 +97,7 @@ extension Parser.Machine {
 
                 case .extra(.memoization(let node, let startPosition)):
                     let key = MemoKey(position: startPosition, node: node)
-                    memoization.store(.failure, for: key)
+                    memoization.store(.failure(error), for: key)
 
                 case .map, .tryMap, .flatMap, .sequence:
                     continue
@@ -215,10 +215,10 @@ extension Parser.Machine {
                     pendingHandle = arena.allocate(output)
                     continue
 
-                case .failure:
+                case .failure(let storedError):
                     // Cached failure: propagate through failure handling
                     switch try handleMemoizedFailure(
-                        error: Parser_Primitives.Parser.Machine.Runtime.Error.cachedFailure,
+                        error: storedError,
                         frames: &frames,
                         arena: &arena,
                         input: &input,
@@ -234,7 +234,21 @@ extension Parser.Machine {
                         continue
 
                     case .propagate:
-                        fatalError("Cached failure with no recovery")
+                        // A repeat parse of previously-failed input hits this
+                        // cached entry and must re-throw the *same* typed
+                        // failure that originally propagated to the root
+                        // without a recovery frame — not crash the process.
+                        // `storedError` was boxed as `Failure` at the point
+                        // this entry was populated (`handleMemoizedFailure`'s
+                        // `.extra(.memoization)` arm, above), so the downcast
+                        // cannot fail in practice; a mismatch would mean this
+                        // `Table` was populated by a differently-`Failure`-typed
+                        // `run` invocation, which its sole owner
+                        // (`Parser.Machine.Parser.Parse.Incremental`) never does.
+                        guard let typedFailure = storedError as? Failure else {
+                            fatalError("Internal error: cached failure type mismatch")
+                        }
+                        throw typedFailure
                     }
                 }
             }

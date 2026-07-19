@@ -3,6 +3,10 @@ import Parser_Machine_Memoization_Primitives
 import Tagged_Primitives_Test_Support
 import Testing
 
+private enum TestFailure: Swift.Error, Sendable {
+    case sample
+}
+
 @Suite
 struct `Parser.Machine.Memoization.Table Tests` {
     @Suite struct Unit {}
@@ -32,7 +36,7 @@ extension `Parser.Machine.Memoization.Table Tests`.Unit {
     func `store and lookup returns entry`() {
         var table = Parser.Machine.Memoization.Table<Int>()
         let key = Parser.Machine.Memoization.Key<Int>(position: 0, node: 1)
-        let entry = Parser.Machine.Memoization.Entry<Int>.failure
+        let entry = Parser.Machine.Memoization.Entry<Int>.failure(TestFailure.sample)
 
         table.store(entry, for: key)
         let result = table.lookup(key)
@@ -45,8 +49,8 @@ extension `Parser.Machine.Memoization.Table Tests`.Unit {
         let key1 = Parser.Machine.Memoization.Key<Int>(position: 0, node: 1)
         let key2 = Parser.Machine.Memoization.Key<Int>(position: 1, node: 1)
 
-        table.store(.failure, for: key1)
-        table.store(.failure, for: key2)
+        table.store(.failure(TestFailure.sample), for: key1)
+        table.store(.failure(TestFailure.sample), for: key2)
         #expect(table.count == 2)
     }
 
@@ -54,7 +58,7 @@ extension `Parser.Machine.Memoization.Table Tests`.Unit {
     func `clear removes all entries`() {
         var table = Parser.Machine.Memoization.Table<Int>()
         let key = Parser.Machine.Memoization.Key<Int>(position: 0, node: 1)
-        table.store(.failure, for: key)
+        table.store(.failure(TestFailure.sample), for: key)
         #expect(!table.isEmpty)
 
         table.clear()
@@ -78,7 +82,7 @@ extension `Parser.Machine.Memoization.Table Tests`.`Edge Case` {
         var table = Parser.Machine.Memoization.Table<Int>()
         let key = Parser.Machine.Memoization.Key<Int>(position: 0, node: 1)
 
-        table.store(.failure, for: key)
+        table.store(.failure(TestFailure.sample), for: key)
         #expect(table.lookup(key)?.isFailure == true)
 
         let value = Parser.Machine.Value.make(42)
@@ -94,9 +98,9 @@ extension `Parser.Machine.Memoization.Table Tests`.`Edge Case` {
         let key5 = Parser.Machine.Memoization.Key<Int>(position: 5, node: 1)
         let key10 = Parser.Machine.Memoization.Key<Int>(position: 10, node: 1)
 
-        table.store(.failure, for: key0)
-        table.store(.failure, for: key5)
-        table.store(.failure, for: key10)
+        table.store(.failure(TestFailure.sample), for: key0)
+        table.store(.failure(TestFailure.sample), for: key5)
+        table.store(.failure(TestFailure.sample), for: key10)
         #expect(table.count == 3)
 
         table.invalidate(from: 5)
@@ -114,9 +118,9 @@ extension `Parser.Machine.Memoization.Table Tests`.`Edge Case` {
         let key15 = Parser.Machine.Memoization.Key<Int>(position: 15, node: 1)
 
         // Failure entries: kept only if position < edit.start
-        table.store(.failure, for: key0)
-        table.store(.failure, for: key5)
-        table.store(.failure, for: key15)
+        table.store(.failure(TestFailure.sample), for: key0)
+        table.store(.failure(TestFailure.sample), for: key5)
+        table.store(.failure(TestFailure.sample), for: key15)
         #expect(table.count == 3)
 
         let edit = Parser.Machine.Memoization.Edit<Int>(start: 5, oldEnd: 10, newEnd: 8)

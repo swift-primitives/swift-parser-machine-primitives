@@ -145,6 +145,31 @@ extension `Parser.Machine.Parser.Parse.Incremental Tests`.`Edge Case` {
         ctx.invalidate(.init(start: 1, oldEnd: 1, newEnd: 2))
         #expect(ctx.count < countBefore)
     }
+
+    // MARK: F-001 regression
+
+    @Test
+    func `re-parsing previously-failed input throws the same typed failure instead of crashing`() throws {
+        let parser: Parser.Machine.Parser<Input, UInt8, MatchByte.Error> = Parser.Machine.build { builder in
+            Parser.Machine.leaf(MatchByte(expected: 65), in: &builder)
+        }
+
+        var ctx = parser.parse.incremental
+
+        var input1 = Input([90])
+        #expect(throws: MatchByte.Error.self) {
+            _ = try ctx(&input1)
+        }
+
+        // Same failing content again: this hits the memoized `.failure` entry
+        // cached by the first attempt. It must re-throw the typed failure,
+        // not crash the process with "Cached failure with no recovery".
+        var input2 = Input([90])
+        #expect(throws: MatchByte.Error.self) {
+            _ = try ctx(&input2)
+        }
+    }
+
 }
 
 // MARK: - Integration
@@ -189,5 +214,25 @@ extension `Parser.Machine.Parser.Parse.Incremental Tests`.Integration {
 
         #expect(depth == 3)
         #expect(ctx.count > 0)
+    }
+
+    @Test
+    func `fails then edit invalidates cached failure then re-parse succeeds`() throws {
+        let parser: Parser.Machine.Parser<Input, UInt8, MatchByte.Error> = Parser.Machine.build { builder in
+            Parser.Machine.leaf(MatchByte(expected: 65), in: &builder)
+        }
+
+        var ctx = parser.parse.incremental
+
+        var input1 = Input([90])
+        #expect(throws: MatchByte.Error.self) {
+            _ = try ctx(&input1)
+        }
+
+        // Replace the single byte with the expected one, invalidate, re-parse.
+        ctx.invalidate(.init(start: 0, oldEnd: 1, newEnd: 1))
+        var input2 = Input([65])
+        let result = try ctx(&input2)
+        #expect(result == 65)
     }
 }
