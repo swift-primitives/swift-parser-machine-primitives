@@ -170,6 +170,97 @@ extension `Parser.Machine.Parser.Parse.Incremental Tests`.`Edge Case` {
         }
     }
 
+    // MARK: F-002 regression
+
+    @Test
+    func `invalidate from position drops success entries whose span crosses the cutoff`() throws {
+        let parser: Parser.Machine.Parser<Input, [UInt8], ByteParser.Error> = Parser.Machine.build { builder in
+            let byte = Parser.Machine.leaf(ByteParser(), in: &builder)
+            return Parser.Machine.many(byte, in: &builder)
+        }
+
+        var ctx = parser.parse.incremental
+        var input1 = Input([65, 66, 67, 68])
+        let result1 = try ctx(&input1)
+        #expect(result1 == [65, 66, 67, 68])
+
+        // The whole-parse entry spans [0, 4) and crosses this cutoff, so it
+        // must be dropped even though its *start* (0) is before position 2 —
+        // otherwise the stale entry is reused below and the changed bytes at
+        // positions 2 and 3 are never examined.
+        ctx.invalidate(from: 2)
+
+        var input2 = Input([65, 66, 99, 100])
+        let result2 = try ctx(&input2)
+
+        #expect(result2 == [65, 66, 99, 100])
+    }
+
+    @Test
+    func `re-parse after insert edit matches a fresh parse of the edited content`() throws {
+        let parser: Parser.Machine.Parser<Input, [UInt8], ByteParser.Error> = Parser.Machine.build { builder in
+            let byte = Parser.Machine.leaf(ByteParser(), in: &builder)
+            return Parser.Machine.many(byte, in: &builder)
+        }
+
+        var ctx = parser.parse.incremental
+        var original = Input([65, 66, 67, 68, 69])
+        _ = try ctx(&original)
+
+        // Insert one byte at the front: "ABCDE" -> "XABCDE".
+        ctx.invalidate(.init(start: 0, oldEnd: 0, newEnd: 1))
+        var edited = Input([88, 65, 66, 67, 68, 69])
+        let incrementalResult = try ctx(&edited)
+
+        var fresh = Input([88, 65, 66, 67, 68, 69])
+        let freshResult = try parser.parse(&fresh)
+
+        #expect(incrementalResult == freshResult)
+    }
+
+    @Test
+    func `re-parse after delete edit matches a fresh parse of the edited content`() throws {
+        let parser: Parser.Machine.Parser<Input, [UInt8], ByteParser.Error> = Parser.Machine.build { builder in
+            let byte = Parser.Machine.leaf(ByteParser(), in: &builder)
+            return Parser.Machine.many(byte, in: &builder)
+        }
+
+        var ctx = parser.parse.incremental
+        var original = Input([65, 66, 67, 68, 69])
+        _ = try ctx(&original)
+
+        // Delete the byte at position 1: "ABCDE" -> "ACDE".
+        ctx.invalidate(.delete(from: 1, to: 2))
+        var edited = Input([65, 67, 68, 69])
+        let incrementalResult = try ctx(&edited)
+
+        var fresh = Input([65, 67, 68, 69])
+        let freshResult = try parser.parse(&fresh)
+
+        #expect(incrementalResult == freshResult)
+    }
+
+    @Test
+    func `re-parse after replace edit matches a fresh parse of the edited content`() throws {
+        let parser: Parser.Machine.Parser<Input, [UInt8], ByteParser.Error> = Parser.Machine.build { builder in
+            let byte = Parser.Machine.leaf(ByteParser(), in: &builder)
+            return Parser.Machine.many(byte, in: &builder)
+        }
+
+        var ctx = parser.parse.incremental
+        var original = Input([65, 66, 67, 68, 69])
+        _ = try ctx(&original)
+
+        // Replace positions [1, 3) ("BC") with a single byte "Z": "ABCDE" -> "AZDE".
+        ctx.invalidate(.init(start: 1, oldEnd: 3, newEnd: 2))
+        var edited = Input([65, 90, 68, 69])
+        let incrementalResult = try ctx(&edited)
+
+        var fresh = Input([65, 90, 68, 69])
+        let freshResult = try parser.parse(&fresh)
+
+        #expect(incrementalResult == freshResult)
+    }
 }
 
 // MARK: - Integration
